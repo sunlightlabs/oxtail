@@ -1,22 +1,11 @@
-This is the name parser and standardizer for the datacommons project.
-For the moment, it only supports standardizing politician names, and
-probably needs a whole bunch of refactoring.
+This is a Django and Javascript application to provide integration between Gmail
+and Poligraft, initially via Rapportive, but potentially also via bookmarklet
+and/or browser extension.
 
 Installation
 ============
 
-Installation is easy:
+To install:
 
-    pip install -e git+http://github.com/sunlightlabs/name-cleaver.git#egg=name-cleaver
-
-
-Upgrading
-=========
-
-Upgrading takes a little more work (you'll have to modify this a bit if you're not using virtualenv/virtualenvwrapper):
-
-    pip uninstall name-cleaver
-    cdvirtualenv
-    rm -rf src/name-cleaver
-    pip install -e git+http://github.com/sunlightlabs/name-cleaver.git#egg=name-cleaver
+    pip install -e git+http://github.com/sunlightlabs/oxtail.git#egg=oxtail
 
