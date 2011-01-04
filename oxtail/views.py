@@ -18,7 +18,10 @@ def raplet(request):
     }
     response = {
         'html': render_to_string('oxtail/poligraft.html'),
-        'js': render_to_string('oxtail/poligraft.js', host),
+        'js': "\n".join([
+            get_file_contents('%s/media/js/jquery.windowname.plugin.js' % os.path.dirname(__file__)),
+            render_to_string('oxtail/poligraft.js', host)
+        ]),
         'css': render_to_string('oxtail/poligraft.css', host),
     }
     

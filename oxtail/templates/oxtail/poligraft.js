@@ -1,4 +1,4 @@
-(function() {
+(function($) {
     var console = parent.console;
     
     // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
@@ -57,9 +57,17 @@
         var origMessage = this;
         this.state = 'fetching';
         
+        //Determine URL and method
+        var encodedText = encodeURIComponent(text);
+        var isShort = encodedText.length < 2000;
+        
         //Submit to Poligraft
-        $.getJSON('http://poligraft.com/poligraft?json=1&text=' + encodeURIComponent(text) + '&callback=?',
-            function(data) {
+        $.ajax({
+            url: 'http://poligraft.com/poligraft',
+            type: isShort ? 'GET' : 'POST',
+            dataType: isShort ? 'jsonp': 'json',
+            data: {json: 1, text: encodedText},
+            success: function(data) {
                 var endpoint = 'http://poligraft.com/' + data.slug + '.json?callback=?'
                 var interval = setInterval(function() {
                     $.getJSON(endpoint, function(realData) {
@@ -72,7 +80,7 @@
                     })
                 }, 2000);
             }
-        );        
+        });        
     }
     
     PgMessage.prototype.renderIfAvailable = function() {
@@ -157,4 +165,4 @@
     $(document).find('#poligraft-rapportive input').click(function() {
         window.poligraftParser.fetchData();
     }).removeAttr('disabled');
-})();
+})(jQuery);
