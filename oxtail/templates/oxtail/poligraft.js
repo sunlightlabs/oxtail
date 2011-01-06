@@ -1,6 +1,35 @@
 (function($) {
     var console = parent.console;
     
+    // Microtemplates, swiped from underscore
+    var _ = {};
+    _.templateSettings = {
+        evaluate    : /<%([\s\S]+?)%>/g,
+        interpolate : /<%=([\s\S]+?)%>/g
+    };
+    
+    _.template = function(str, data) {
+        var c  = _.templateSettings;
+        var tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
+            'with(obj||{}){__p.push(\'' +
+            str.replace(/\\/g, '\\\\')
+               .replace(/'/g, "\\'")
+               .replace(c.interpolate, function(match, code) {
+                   return "'," + code.replace(/\\'/g, "'") + ",'";
+               })
+               .replace(c.evaluate || null, function(match, code) {
+                   return "');" + code.replace(/\\'/g, "'")
+                                      .replace(/[\r\n\t]/g, ' ') + "__p.push('";
+               })
+               .replace(/\r/g, '\\r')
+               .replace(/\n/g, '\\n')
+               .replace(/\t/g, '\\t')
+               + "');}return __p.join('');";
+        var func = new Function('obj', tmpl);
+        return data ? func(data) : func;
+    };
+
+    
     // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
     var PgParser = function() {
         this.threads = {};
@@ -59,14 +88,14 @@
         
         //Determine URL and method
         var encodedText = encodeURIComponent(text);
-        var isShort = encodedText.length < 2000;
+        var isShort = text.length < 2000;
         
         //Submit to Poligraft
         $.ajax({
             url: 'http://poligraft.com/poligraft',
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
-            data: {json: 1, text: encodedText},
+            data: {json: 1, text: text},
             success: function(data) {
                 var endpoint = 'http://poligraft.com/' + data.slug + '.json?callback=?'
                 var interval = setInterval(function() {
@@ -93,16 +122,10 @@
                 this.remapIfNecessary();
                 
                 var text = div.html();
+                var message = this;
                 $.each(this.pgData.entities, function(num, entity) {
                     if (!entity.tdata_id) return;
-                    var label = "<span class='pg-wrapper'><div class='pg-insert'>"
-                        + "<a href='http://influenceexplorer.com/" + entity.tdata_type + "/" + entity.tdata_slug + "/" + entity.tdata_id + "'><h3>" + entity.tdata_name +"</h3></a>"
-                        + (entity.recipient_breakdown.dem === undefined ? "" : "<img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:" + entity.recipient_breakdown.dem + "," + entity.recipient_breakdown.rep + "&amp;chdl=Democrats|Republicans' alt='Chart for " + entity.name + "'>")
-                        + (entity.contributor_breakdown.individual === undefined ? "" : "<img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:" + entity.contributor_breakdown.individual + "," + entity.contributor_breakdown.pac + "&amp;chdl=Individuals|PACs' alt='Chart for " + entity.name + "'>")
-                        + (entity.top_industries.length == 0 ? "" : "<div class='pg-info'><strong>Top Contributing Industries:</strong><ul><li>" + entity.top_industries.join("</li><li>") + "</li></div>")
-                        + (entity.contributors.length == 0 ? "" : "<div class='pg-info'><strong>Relevant Contributions:</strong><ul><li>" + $.map(entity.contributors, function(cont) { return "<strong>$" + cont.amount + "</strong> " + (entity.tdata_type == 'politician' ? 'from' : 'to') + " <strong><a href='http://influenceexplorer.com/" + cont.tdata_type + "/" + cont.tdata_slug + "/" + cont.tdata_id + "'>" + cont.tdata_name + "</a></strong>."; }).join("</li><li>") + "</li></ul></div>")
-                        + "<br /><a href='http://influenceexplorer.com/" + entity.tdata_type + "/" + entity.tdata_slug + "/" + entity.tdata_id + "'>Learn More &raquo;</a>"
-                        + "</div><span class='pg-highlighted'>" + entity.name + "</span></span>";
+                    var label = message.templates.label(entity);
                     text = text.replace(new RegExp(entity.name, 'g'), label);
                 })
                 div.html(text);
@@ -140,6 +163,10 @@
             }
         });
         this.remapped = true;
+    }
+    
+    PgMessage.prototype.templates = {
+        label: _.template("{% filter escapejs %}{% include 'oxtail/item_label.mt.html' %}{% endfilter %}")
     }
     
     

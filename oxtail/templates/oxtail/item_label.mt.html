@@ -1,0 +1,47 @@
+<span class='pg-wrapper'>
+    <div class='pg-insert'>
+        <a href='http://influenceexplorer.com/<%=tdata_type%>/<%=tdata_slug%>/<%=tdata_id%>'>
+            <h3><%=tdata_name%></h3>
+        </a>
+        
+        <% if (recipient_breakdown.dem !== undefined) { %>
+        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:<%=recipient_breakdown.dem%>,<%=recipient_breakdown.rep%>&amp;chdl=Democrats|Republicans' alt='Chart for <%=name%>'>
+        <% } %>
+        
+        <% if (contributor_breakdown.individual !== undefined) { %>
+        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:<%=contributor_breakdown.individual%>,<%=contributor_breakdown.pac%>&amp;chdl=Individuals|PACs' alt='Chart for <%=name%>'>
+        <% } %>
+        
+        <% if (top_industries.length > 0) { %>
+        <div class='pg-info'>
+            <strong>Top Contributing Industries:</strong>
+            <ul>
+                <% for (var i = 0; i < top_industries.length; i++) { %>
+                <li><%=top_industries[i]%></li>
+                <% } %>
+            </ul>
+        </div>
+        <% } %>
+        
+        <% if (contributors.length > 0) { %>
+        <div class='pg-info'>
+            <strong>Relevant Contributions:</strong>
+            <ul>
+                <% for (var i = 0; i < contributors.length; i++) { %>
+                <li>
+                    <strong>$<%=contributors[i].amount%></strong>
+                    <% if (tdata_type == 'politician') { %>from<% } else { %>to<% } %>
+                    <strong>
+                        <a href='http://influenceexplorer.com/<%=contributors[i].tdata_type%>/<%=contributors[i].tdata_slug%>/<%=contributors[i].tdata_id%>'><%=contributors[i].tdata_name%></a>
+                    </strong>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <% } %>
+        
+        <br />
+        <a href='http://influenceexplorer.com/<%=tdata_type%>/<%=tdata_slug%>/<%=tdata_id%>'>Learn More &raquo;</a>
+    </div>
+    <span class='pg-highlighted'><%=name%></span>
+</span>
