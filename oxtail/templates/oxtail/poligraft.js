@@ -92,7 +92,7 @@
         
         //Submit to Poligraft
         $.ajax({
-            url: 'http://poligraft.com/poligraft',
+            url: isShort ? 'http://poligraft.com/poligraft' : '{{ host }}{{ oxtail_path }}/pg_proxy',
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
             data: {json: 1, text: text},
@@ -133,9 +133,9 @@
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
                 
                 div.find('.pg-wrapper').hover(function() {
-                    $(this).find('.pg-insert').show();
+                    $(this).children('.pg-insert').show();
                 }, function() {
-                    $(this).find('.pg-insert').hide();
+                    $(this).children('.pg-insert').hide();
                 })
             } else if (this.state == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
                 div.addClass('pg-fetching');
@@ -184,7 +184,7 @@
         }
     })
     if (!stylesLoaded) {
-        $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_path }}/css/poligraft-rapportive.css" />')
+        $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css" />')
     }
     
     // Reparse the current page and enable the button
