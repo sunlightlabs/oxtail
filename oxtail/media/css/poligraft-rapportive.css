@@ -31,6 +31,9 @@
     padding: 0px !important;
     margin-left: 15px !important;
 }
+.pg-insert img {
+    border: 0px !important;
+}
 .pg-info {
     border-top: 1px solid #cccccc;
     margin-top: 8px;
