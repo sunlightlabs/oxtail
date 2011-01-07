@@ -20,12 +20,9 @@ def raplet(request):
         'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
     }
     response = {
-        'html': render_to_string('oxtail/poligraft.html'),
-        'js': "\n".join([
-            get_file_contents('%s/media/js/jquery.windowname.plugin.js' % os.path.dirname(__file__)),
-            render_to_string('oxtail/poligraft.js', host)
-        ]),
-        'css': render_to_string('oxtail/poligraft.css', host),
+        'html': render_to_string('oxtail/poligraft.html', host),
+        'js': '',
+        'css': '',
     }
     
     out = json.dumps(response)
@@ -34,12 +31,21 @@ def raplet(request):
     else:
         return HttpResponse(out, mimetype="application/json")
 
-def test_js(request):
+def oxtail_js(request):
     host = {
         'host' : 'http://%s' % request.META['HTTP_HOST'],
-        'oxtail_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
+        'oxtail_path': getattr(settings, 'OXTAIL_PATH', '/gmail'),
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
     }
-    return HttpResponse(render_to_string('oxtail/poligraft.js', host), 'text/javascript')
+    
+    js = "\n".join([
+        get_file_contents('%s/media/js/jquery-1.4.4.min.js' % os.path.dirname(__file__)),
+        'jQuery.noConflict();',
+        get_file_contents('%s/media/js/jquery.windowname.plugin.js' % os.path.dirname(__file__)),
+        render_to_string('oxtail/poligraft.js', host)
+    ])
+    
+    return HttpResponse(js, 'text/javascript')
 
 @cors_allow_all
 def pg_proxy(request):
