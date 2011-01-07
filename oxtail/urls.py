@@ -8,4 +8,6 @@ urlpatterns = patterns('',
     url(r'^pg_proxy$', 'oxtail.views.pg_proxy', name='pg_proxy'),
     
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/media'}),
+    
+    url(r'^$', 'oxtail.views.index', name='oxtail_index'),
 )

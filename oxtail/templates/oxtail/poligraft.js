@@ -187,9 +187,7 @@
         $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css" />')
     }
     
-    // Reparse the current page and enable the button
+    // On first run, we're on a message, so we can go ahead and run
     window.poligraftParser.loadPage();
-    $(document).find('#poligraft-rapportive input').click(function() {
-        window.poligraftParser.fetchData();
-    }).removeAttr('disabled');
+    window.poligraftParser.fetchData();
 })(jQuery);

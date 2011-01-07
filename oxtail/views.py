@@ -6,6 +6,8 @@ import os
 import urllib2
 from django.conf import settings
 from oxtail.decorators import cors_allow_all
+from django.views.generic.simple import direct_to_template
+
 
 def get_file_contents(filename):
     file = open(filename)
@@ -58,3 +60,12 @@ def pg_proxy(request):
     
     resource = urllib2.urlopen('http://poligraft.com/poligraft', **url_kwargs)
     return HttpResponse(resource.read())
+
+def index(request):
+    host = {
+        'host' : 'http://%s' % request.META['HTTP_HOST'],
+        'oxtail_path': getattr(settings, 'OXTAIL_PATH', '/gmail'),
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
+    }
+    
+    return direct_to_template(request, 'oxtail/index.html', extra_context=host)

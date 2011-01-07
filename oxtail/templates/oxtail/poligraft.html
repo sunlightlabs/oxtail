@@ -1,20 +1,9 @@
-<div id="poligraft-rapportive">
+<div id="oxtail-div">
     <h2>Poligraft</h2>
-    <input type="button" value="Submit to Poligraft" disabled="disabled" />
+    <input id="oxtail-submit" type="button" value="Submit to Poligraft" disabled="disabled" />
     <script type="text/javascript">
         (function() {
-            if (window.poligraftParser) {
-                window.poligraftParser.loadPage();
-                jQuery(document).find('#poligraft-rapportive input').click(function() {
-                    window.poligraftParser.fetchData();
-                }).removeAttr('disabled');
-            } else {
-                var s = document.createElement('script');
-                s.setAttribute('src', '{{ host }}{{ oxtail_path }}/oxtail.js');
-                s.setAttribute('type', 'text/javascript');
-                var parent = document.getElementById('poligraft-rapportive');
-                parent.appendChild(s);
-            }
+            {% include 'oxtail/loader.js' %}
         })();
     </script>
 </div>
