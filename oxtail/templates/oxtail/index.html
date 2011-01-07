@@ -5,10 +5,11 @@
     </head>
     <body>
         <a href="javascript:void(window.loadOxtail = function(document) {
+            if (!document) return;
             {% include 'oxtail/button_adder.js' %}
             {% include 'oxtail/loader.js' %}
             if (submit) submit.onclick();
-        }); loadOxtail(document.getElementById('canvas_frame').contentDocument);">
+        }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">
             Oxtail Bookmarklet
         </a>
     </body>

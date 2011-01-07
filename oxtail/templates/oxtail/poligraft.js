@@ -126,7 +126,7 @@
                 $.each(this.pgData.entities, function(num, entity) {
                     if (!entity.tdata_id) return;
                     var label = message.templates.label(entity);
-                    text = text.replace(new RegExp(entity.name, 'g'), label);
+                    text = text.split(entity.name).join(label);
                 })
                 div.html(text);
                 
@@ -190,4 +190,11 @@
     // On first run, we're on a message, so we can go ahead and run
     window.poligraftParser.loadPage();
     window.poligraftParser.fetchData();
+    
+    // Unless we're using rapportive, rerun on hash change
+    if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
+        parent.onhashchange = function() {
+            window.poligraftParser.loadPage();
+        };
+    }
 })(jQuery);
