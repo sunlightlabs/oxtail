@@ -69,3 +69,36 @@ def index(request):
     }
     
     return direct_to_template(request, 'oxtail/index.html', extra_context=host)
+
+
+# Browser extension code
+from oxtail.extension import UserScriptExtension
+class OxtailExtension(UserScriptExtension):
+    name = 'Oxtail'
+    version = '0.1'
+    description = 'Oxtail implemented as a Chrome extension.'
+    matches = [
+        "http://mail.google.com/mail*",
+        "https://mail.google.com/mail*",
+        "http://mail.google.com/a/*",
+        "https://mail.google.com/a/*"
+    ]
+    
+    pem_path = os.path.join(os.path.dirname(__file__), 'oxtail.pem')
+    
+    def __init__(self, host, oxtail_path):
+        self.host = host
+        self.oxtail_path = oxtail_path
+    
+    def get_user_script(self):
+        host = {
+            'host' : 'http://%s' % self.host,
+            'oxtail_path': self.oxtail_path,
+        }
+        return render_to_string('oxtail/crx.js', host)
+
+def oxtail_crx(request):
+    extension = OxtailExtension(request.META['HTTP_HOST'], getattr(settings, 'OXTAIL_PATH', '/gmail'))
+    response = HttpResponse(mimetype='application/x-chrome-extension')
+    extension.gen_crx(response)
+    return response
