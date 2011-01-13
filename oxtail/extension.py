@@ -7,6 +7,7 @@ import sys
 import zipfile
 import json
 from Crypto.PublicKey import RSA
+import subprocess
 
 class CrxExtension(object):
     def get_crx_manifest(self):
@@ -61,10 +62,14 @@ class CrxExtension(object):
             pkey = RSA.importKey(private_pem)
         else:
             pkey = RSA.generate(1024)
+            pem_name = '/tmp/key_%s.pem' % pkey.exportKey(format='PEM').split('\n')[1][-10:]
+            key_file = open(pem_name, 'w')
+            key_file.write(pkey.exportKey(format='PEM'))
         
-        print pkey.exportKey()
+        # I couldn't actually get pycrypto to generate the right thing, here, so I'm calling OpenSSL to do it
+        openssl_signer = subprocess.Popen(['openssl', 'sha1', '-sha1', '-binary', '-sign', pem_name], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        sign = openssl_signer.communicate(zip_data)[0]
         
-        sign = pkey.sign(zip_data, None)
         der_key = pkey.publickey().exportKey(format='DER')
         magic = 'Cr24'
         version = struct.pack("<I", 2)
