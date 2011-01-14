@@ -1,0 +1,2 @@
+content    {{ shortname }}    content/
+overlay    chrome://browser/content/browser.xul    chrome://{{ shortname }}/content/script-compiler-overlay.xul

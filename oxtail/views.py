@@ -74,6 +74,7 @@ def index(request):
 # Browser extension code
 from oxtail.extension import UserScriptExtension
 class OxtailExtension(UserScriptExtension):
+    id = 'oxtail@sunlightfoundation.com'
     name = 'Oxtail'
     version = '0.1'
     description = 'Oxtail implemented as a Chrome extension.'
@@ -101,4 +102,10 @@ def oxtail_crx(request):
     extension = OxtailExtension(request.META['HTTP_HOST'], getattr(settings, 'OXTAIL_PATH', '/gmail'))
     response = HttpResponse(mimetype='application/x-chrome-extension')
     extension.gen_crx(response)
+    return response
+
+def oxtail_xpi(request):
+    extension = OxtailExtension(request.META['HTTP_HOST'], getattr(settings, 'OXTAIL_PATH', '/gmail'))
+    response = HttpResponse(mimetype='application/x-xpinstall')
+    extension.gen_xpi(response)
     return response

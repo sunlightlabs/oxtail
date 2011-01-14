@@ -85,24 +85,3 @@ class CrxExtension(object):
         out.write(zip_data)
         
         return out
-
-class UserScriptExtension(CrxExtension):
-    def get_crx_files(self):
-        out = super(UserScriptExtension, self).get_crx_files()
-        out['user.js'] = self.get_user_script()
-        return out
-    
-    def get_crx_manifest(self):
-        out = super(UserScriptExtension, self).get_crx_manifest()
-        out['content_scripts'] = [
-            {
-                'exclude_globs': [],
-                'include_globs': [],
-                'js': ['user.js'],
-                'matches': getattr(self, 'matches', [])
-            }
-        ]
-        return out
-    
-    def get_user_script(self):
-        return ""
