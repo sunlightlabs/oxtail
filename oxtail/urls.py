@@ -4,6 +4,7 @@ import os
 urlpatterns = patterns('',
     url(r'^rapportive.json$', 'oxtail.views.raplet', name='raplet'),
     url(r'^oxtail.js$', 'oxtail.views.oxtail_js', name='oxtail_js'),
+    url(r'^person_info.json$', 'oxtail.views.person_info', name='oxtail_person_info'),
     
     url(r'^oxtail.crx$', 'oxtail.views.oxtail_crx', name='oxtail_crx'),
     url(r'^oxtail.xpi$', 'oxtail.views.oxtail_xpi', name='oxtail_xpi'),

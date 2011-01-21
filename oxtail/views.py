@@ -7,6 +7,10 @@ import urllib2
 from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
+from lookup import *
+
+from django.conf import settings
+from influence.api import api
 
 
 def get_file_contents(filename):
@@ -69,6 +73,44 @@ def index(request):
     }
     
     return direct_to_template(request, 'oxtail/index.html', extra_context=host)
+
+def person_info(request):
+    name = request.GET.get('name', '').strip()
+    email = request.GET.get('email', '').strip()
+    
+    out = {}
+    
+    if email:
+        out['email'] = email
+        parts = email.split("@")
+        if len(parts) > 1:
+            domain = parts[1]
+            out['domain'] = domain
+            orgs = lookup_domain(domain)
+            if orgs:
+                out['organization'] = orgs[0]['name']
+    
+    if name:
+        out['name'] = name
+        if 'organization' in out:
+            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=True, contributor_ft=name, organization_ft=out['organization'])
+            if results:
+                out['indiv_contributions'] = results
+        
+        if 'indiv_contributions' not in out:
+            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=True, contributor_ft='John Thompson')
+            out['indiv_contributions'] = results
+    
+    if 'organization' in out:
+        org_results = api.entity_search(out['organization'])
+        if org_results:
+            out['org_info'] = org_results
+    
+    jout = json.dumps(out)
+    if 'callback' in request.GET:
+        return HttpResponse('%s(%s)' % (request.GET['callback'], jout), 'text/javascript')
+    else:
+        return HttpResponse(jout, mimetype="application/json")
 
 
 # Browser extension code

@@ -64,18 +64,33 @@
     }
     
     var PgMessage = function(hash, index) {
-        this.state = 'not fetched';
+        this.pgState = 'not fetched';
+        this.senderState = 'not fetched';
         this.hash = hash;
         this.index = index;
         this.remapped = false;
+    }
+    
+    PgMessage.prototype.getState = function() {
+        if (this.pgState == 'fetching' || this.senderState == 'fetching') {
+            return 'fetching';
+        } else if (this.pgState == 'fetched' && this.senderState == 'fetched') {
+            return 'fetched';
+        } else {
+            return 'not fetched';
+        }
     }
     
     PgMessage.prototype.getDiv = function() {
         return $(document).find('.Bk').eq(this.index).find('.ii.gt>div');
     }
     
+    PgMessage.prototype.getSender = function() {
+        return this.getDiv().parent().parent().children('.gE.iv.gt').find('h3>span[email]');
+    }
+    
     PgMessage.prototype.fetch = function(callback) {
-        if (this.state == 'fetched') {
+        if (this.getState() == 'fetched') {
             callback();
             return;
         }
@@ -84,7 +99,7 @@
         if (div.length == 0) return;
         var text = div.html();
         var origMessage = this;
-        this.state = 'fetching';
+        this.pgState = 'fetching';
         
         //Determine URL and method
         var encodedText = encodeURIComponent(text);
@@ -102,20 +117,37 @@
                     $.getJSON(endpoint, function(realData) {
                         if (realData.processed) {
                             origMessage.pgData = realData;
-                            origMessage.state = 'fetched';
+                            origMessage.pgState = 'fetched';
                             clearInterval(interval);
-                            callback();
+                            if (origMessage.getState() == 'fetched') callback();
                         }
                     })
                 }, 2000);
             }
-        });        
+        });
+        
+        //Get sender information
+        var sender = this.getSender();
+        var senderName = sender.html();
+        var senderAddress = sender.attr('email');
+        $.ajax({
+            url: '{{ host }}{{ oxtail_path }}/person_info.json',
+            type: 'GET',
+            dataType: 'jsonp',
+            data: {name: senderName, email: senderAddress},
+            success: function(data) {
+                origMessage.senderData = data;
+                origMessage.senderState = 'fetched';
+                if (origMessage.getState() == 'fetched') callback();
+            }
+        })
     }
     
     PgMessage.prototype.renderIfAvailable = function() {
         if (this.hash == parent.location.hash) {
             var div = this.getDiv();
-            if (this.state == 'fetched' && !div.hasClass('pg-rendered') && div.length > 0) {
+            if (this.getState() == 'fetched' && !div.hasClass('pg-rendered') && div.length > 0) {
+                //poligraft rendering
                 div.removeClass('pg-fetching');
                 div.addClass('pg-rendered');
                 
@@ -137,7 +169,14 @@
                 }, function() {
                     $(this).children('.pg-insert').hide();
                 })
-            } else if (this.state == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
+                
+                //sender rendering
+                var h3 = this.getSender().parent();
+                if (this.senderData.organization) {
+                    var org = $('<span class="pg-org"> of ' + this.senderData.organization + '</span>');
+                    h3.append(org);
+                }
+            } else if (this.getState() == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
                 div.addClass('pg-fetching');
             }
         }
