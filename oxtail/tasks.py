@@ -5,7 +5,7 @@ from oxtail.models import Record
 
 @task
 def process_td(id):
-    record = Record.objects.get(id)
+    record = Record.objects.get(pk=id)
     pg_data = json.loads(record.pg_data)
     
     if record.name and record.name not in [entity['name'] for entity in pg_data['entities']]:
@@ -25,7 +25,7 @@ def process_td(id):
 
 @task
 def process_pg(id):
-    record = Record.objects.get(id)
+    record = Record.objects.get(pk=id)
     
     data = urllib2.urlopen('http://poligraft.com/%s.json' % record.pg_id).read()
     jdata = json.loads(data)
