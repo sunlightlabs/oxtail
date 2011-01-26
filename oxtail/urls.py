@@ -11,6 +11,9 @@ urlpatterns = patterns('',
     
     url(r'^pg_proxy$', 'oxtail.views.pg_proxy', name='pg_proxy'),
     
+    url(r'^contextualize$', 'oxtail.views.contextualize_text', name='contextualize'),
+    url(r'^contextualize/(?P<id>.*)$', 'oxtail.views.contextualize_text_data', name='contextualize_data'),
+    
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/media'}),
     
     url(r'^$', 'oxtail.views.index', name='oxtail_index'),

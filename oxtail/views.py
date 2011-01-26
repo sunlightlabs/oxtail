@@ -8,6 +8,9 @@ from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
 from lookup import *
+from oxtail.models import Record
+
+from oxtail.tasks import *
 
 from django.conf import settings
 from influence.api import api
@@ -111,6 +114,47 @@ def person_info(request):
         return HttpResponse('%s(%s)' % (request.GET['callback'], jout), 'text/javascript')
     else:
         return HttpResponse(jout, mimetype="application/json")
+
+@cors_allow_all
+def contextualize_text(request):
+    name = request.REQUEST.get('name', '').strip()
+    email = request.REQUEST.get('email', '').strip()
+    text = request.REQUEST.get('text', '').strip()
+    
+    record = Record(name=name, email=email)
+    record.set_hash(text)
+    
+    if email:
+        out['email'] = email
+        parts = email.split("@")
+        if len(parts) > 1:
+            domain = parts[1]
+            orgs = lookup_domain(domain)
+            if orgs:
+                record.organization = orgs[0]['name']
+    
+    data = urllib2.urlopen('http://poligraft.com/poligraft', urlencode({'json':1, 'text': text})).read()
+    jdata = json.loads(data)
+    
+    record.pg_data = data
+    record.pg_id = jdata['slug']
+    
+    record.save()
+    
+    process_pg.apply_async(args=[record.id], countdown=2)
+    
+    if 'callback' in request.GET:
+        return HttpResponse('%s(%s)' % (request.GET['callback'], record.as_json()), 'text/javascript')
+    else:
+        return HttpResponse(record.as_json(), mimetype="application/json")
+
+def contextualize_text_data(request, id):
+    record = Record.objects.get(pg_id=id)
+    
+    if 'callback' in request.GET:
+        return HttpResponse('%s(%s)' % (request.GET['callback'], record.as_json()), 'text/javascript')
+    else:
+        return HttpResponse(record.as_json(), mimetype="application/json")
 
 
 # Browser extension code
