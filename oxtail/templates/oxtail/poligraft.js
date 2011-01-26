@@ -105,21 +105,26 @@
         var encodedText = encodeURIComponent(text);
         var isShort = text.length < 2000;
         
+        //Get sender information
+        var sender = this.getSender();
+        var senderName = sender.html();
+        var senderAddress = sender.attr('email');
+        
         //Submit to Poligraft
         $.ajax({
-            url: isShort ? 'http://poligraft.com/poligraft' : '{{ host }}{{ oxtail_path }}/pg_proxy',
+            url: '{{ host }}{{ oxtail_path }}/contextualize',
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
-            data: {json: 1, text: text},
+            data: {json: 1, text: text, name: senderName, email: senderAddress},
             success: function(data) {
-                var endpoint = 'http://poligraft.com/' + data.slug + '.json?callback=?'
+                var endpoint = '{{ host }}{{ oxtail_path }}/contextualize/' + data.slug + '?callback=?'
                 var interval = setInterval(function() {
                     $.getJSON(endpoint, function(realData) {
-                        if (realData.processed) {
+                        if (realData.all_processed) {
                             origMessage.pgData = realData;
                             origMessage.pgState = 'fetched';
                             clearInterval(interval);
-                            if (origMessage.getState() == 'fetched') callback();
+                            callback();
                         }
                     })
                 }, 2000);
@@ -127,6 +132,7 @@
         });
         
         //Get sender information
+        /* 
         var sender = this.getSender();
         var senderName = sender.html();
         var senderAddress = sender.attr('email');
@@ -141,6 +147,7 @@
                 if (origMessage.getState() == 'fetched') callback();
             }
         })
+        */
     }
     
     PgMessage.prototype.renderIfAvailable = function() {

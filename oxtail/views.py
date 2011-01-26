@@ -4,6 +4,7 @@ import json
 from urllib import urlencode
 import os
 import urllib2
+import string
 from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
@@ -116,7 +117,7 @@ def person_info(request):
         return HttpResponse(jout, mimetype="application/json")
 
 @cors_allow_all
-def contextualize_text(request):
+def contextualize_text(request, pg_id=None):
     name = request.REQUEST.get('name', '').strip()
     email = request.REQUEST.get('email', '').strip()
     text = request.REQUEST.get('text', '').strip()
@@ -125,7 +126,7 @@ def contextualize_text(request):
     record.set_hash(text)
     
     if email:
-        out['email'] = email
+        record.email = email
         parts = email.split("@")
         if len(parts) > 1:
             domain = parts[1]
@@ -133,7 +134,12 @@ def contextualize_text(request):
             if orgs:
                 record.organization = orgs[0]['name']
     
-    data = urllib2.urlopen('http://poligraft.com/poligraft', urlencode({'json':1, 'text': text})).read()
+    full_text = "%s\n%s\n%s" % (name, record.organization, filter(lambda x: x in string.printable, text))
+    
+    if pg_id:
+        data = urllib2.urlopen('http://poligraft.com/%s.json' % pg_id).read()
+    else:
+        data = urllib2.urlopen('http://poligraft.com/poligraft', urlencode({'json':1, 'text': full_text})).read()
     jdata = json.loads(data)
     
     record.pg_data = data
@@ -149,7 +155,10 @@ def contextualize_text(request):
         return HttpResponse(record.as_json(), mimetype="application/json")
 
 def contextualize_text_data(request, id):
-    record = Record.objects.get(pg_id=id)
+    try:
+        record = Record.objects.get(pg_id=id)
+    except:
+        return contextualize_text(request, id)
     
     if 'callback' in request.GET:
         return HttpResponse('%s(%s)' % (request.GET['callback'], record.as_json()), 'text/javascript')

@@ -48,7 +48,6 @@ def lookup_domain(domain):
         }
         LIMIT 10
     """ % website)
-    print sparql.queryString
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
     

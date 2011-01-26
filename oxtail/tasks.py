@@ -2,6 +2,8 @@ from celery.task import task
 import json
 import urllib2
 from oxtail.models import Record
+from influence.api import api
+from django.conf import settings
 
 @task
 def process_td(id):
@@ -10,12 +12,12 @@ def process_td(id):
     
     if record.name and record.name not in [entity['name'] for entity in pg_data['entities']]:
         if record.organization:
-            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=name, organization_ft=out['organization'])
+            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=record.name, organization_ft=record.organization)
             if results:
                 record.td_sender_info = results
         
         if not record.td_sender_info:
-            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=name)
+            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=record.name)
             record.td_sender_info = results
     
     record.td_processed = True
@@ -32,6 +34,9 @@ def process_pg(id):
     
     if jdata['processed'] == True:
         Record.objects.filter(pk=id).update(pg_data=data, pg_processed=True)
-        process_td.delay(id)
+        post_pg(id)
     else:
         process_pg.apply_async(args=[id], countdown=2)
+
+def post_pg(id):
+    process_td.delay(id)
