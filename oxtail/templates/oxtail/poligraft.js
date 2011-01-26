@@ -72,13 +72,7 @@
     }
     
     PgMessage.prototype.getState = function() {
-        if (this.pgState == 'fetching' || this.senderState == 'fetching') {
-            return 'fetching';
-        } else if (this.pgState == 'fetched' && this.senderState == 'fetched') {
-            return 'fetched';
-        } else {
-            return 'not fetched';
-        }
+        return this.pgState;
     }
     
     PgMessage.prototype.getDiv = function() {
@@ -124,7 +118,7 @@
                             origMessage.pgData = realData;
                             origMessage.pgState = 'fetched';
                             clearInterval(interval);
-                            callback();
+                            if (origMessage.getState() == 'fetched') callback();
                         }
                     })
                 }, 2000);
@@ -162,6 +156,7 @@
                 
                 var text = div.html();
                 var message = this;
+                
                 $.each(this.pgData.entities, function(num, entity) {
                     if (!entity.tdata_id) return;
                     var label = message.templates.label(entity);
@@ -171,18 +166,22 @@
                 
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
                 
-                div.find('.pg-wrapper').hover(function() {
+                //sender rendering
+                var h3 = this.getSender().parent();
+                if (this.pgData.organization) {
+                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.pgData.organization) { return entity } else { return null; } })
+                    console.log(matches);
+                    var org = $('<span class="pg-org"> of ' + (matches.length ? message.templates.label(matches[0]) : message.pgData.organization) + '</span>');
+                    h3.append(org);
+                }
+                h3.parents('.iw').css('overflow', 'visible')
+                
+                div.find('.pg-wrapper').add(h3.find('.pg-wrapper')).hover(function() {
                     $(this).children('.pg-insert').show();
                 }, function() {
                     $(this).children('.pg-insert').hide();
                 })
                 
-                //sender rendering
-                var h3 = this.getSender().parent();
-                if (this.senderData.organization) {
-                    var org = $('<span class="pg-org"> of ' + this.senderData.organization + '</span>');
-                    h3.append(org);
-                }
             } else if (this.getState() == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
                 div.addClass('pg-fetching');
             }

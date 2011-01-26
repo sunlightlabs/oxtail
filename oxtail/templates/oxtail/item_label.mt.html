@@ -40,6 +40,19 @@
         </div>
         <% } %>
         
+        <% if (tdata_type == 'politician' && upcoming_fundraisers.length > 0) { %>
+        <div class='pg-info'>
+            <strong>Relevant Upcoming Fundraisers:</strong>
+            <ul>
+                <% for (var i = 0; i < upcoming_fundraisers.length; i++) { %>
+                <li>
+                    <%=upcoming_fundraisers[i].fields.start_date%>: <a href="http://politicalpartytime.org/party/<%=upcoming_fundraisers[i].pk%>/"><strong><%=upcoming_fundraisers[i].fields.make_checks_payable_to%></strong> at <strong><%=upcoming_fundraisers[i].fields.venue%></strong></a>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <% } %>
+        
         <br />
         <a href='http://influenceexplorer.com/<%=tdata_type%>/<%=tdata_slug%>/<%=tdata_id%>'>Learn More &raquo;</a>
     </div>

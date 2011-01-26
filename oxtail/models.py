@@ -9,6 +9,7 @@ class Record(models.Model):
     email = models.CharField(max_length=64, default='')
     organization = models.CharField(max_length=64, default='')
     td_sender_info = models.TextField(default='')
+    pt_data = models.TextField(default='')
     
     pg_processed = models.BooleanField(default=False)
     pt_processed = models.BooleanField(default=False)
@@ -28,5 +29,12 @@ class Record(models.Model):
         j['td_processed'] = self.td_processed
         j['all_processed'] = self.all_processed()
         j['sender_info'] = json.loads(self.td_sender_info) if self.td_sender_info else False
+        j['organization'] = self.organization
+        
+        if self.pt_processed:
+            pt_data = json.loads(self.pt_data)
+            for entity in j['entities']:
+                if entity['tdata_id'] in pt_data:
+                    entity['upcoming_fundraisers'] = pt_data[entity['tdata_id']]
         
         return json.dumps(j)

@@ -26,6 +26,33 @@ def process_td(id):
     Record.objects.filter(pk=id).update(td_sender_info=record.td_sender_info, td_processed=record.td_processed)
 
 @task
+def process_pt(id):
+    record = Record.objects.get(pk=id)
+    pg_data = json.loads(record.pg_data)
+    
+    workers = []
+    for entity in pg_data['entities']:
+        if entity['tdata_type'] == 'politician':
+            workers.append(process_pt_item.delay(entity['tdata_id']))
+    
+    results = dict([worker.get() for worker in workers])
+    
+    Record.objects.filter(pk=id).update(pt_data=json.dumps(results), pt_processed=True)
+
+@task
+def process_pt_item(tdata_id):
+    info = api.entity_metadata(tdata_id)
+    crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', info['external_ids'])
+    if crp_ids:
+        crp_id = crp_ids[0]['id']
+        pt_data = json.loads(urllib2.urlopen("http://politicalpartytime.org/json/%s/" % crp_id).read())
+        if pt_data:
+            upcoming = filter(lambda e: e['fields']['start_date'] >= "2010-01-26", pt_data)[:3]
+            
+            return (tdata_id, upcoming)
+    return (tdata_id, [])
+
+@task
 def process_pg(id):
     record = Record.objects.get(pk=id)
     
@@ -40,3 +67,4 @@ def process_pg(id):
 
 def post_pg(id):
     process_td.delay(id)
+    process_pt.delay(id)

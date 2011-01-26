@@ -63,3 +63,7 @@
 .pg-org {
     font-weight: normal;
 }
+
+.iw {
+    overflow: visible !important;
+}

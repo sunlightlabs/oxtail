@@ -134,7 +134,7 @@ def contextualize_text(request, pg_id=None):
             if orgs:
                 record.organization = orgs[0]['name']
     
-    full_text = "%s\n%s\n%s" % (name, record.organization, filter(lambda x: x in string.printable, text))
+    full_text = "%s<br />\n%s<br />\n%s" % (name, record.organization, filter(lambda x: x in string.printable, text))
     
     if pg_id:
         data = urllib2.urlopen('http://poligraft.com/%s.json' % pg_id).read()
