@@ -10,7 +10,7 @@ def process_td(id):
     record = Record.objects.get(pk=id)
     pg_data = json.loads(record.pg_data)
     
-    if record.name and record.name not in [entity['name'] for entity in pg_data['entities']]:
+    if record.name and record.name not in [entity['name'] for entity in pg_data['entities'] if entity['tdata_id']]:
         if record.organization:
             results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=record.name, organization_ft=record.organization)
             if results:

@@ -1,0 +1,23 @@
+<span class='pg-wrapper'>
+    <div class='pg-insert'>
+        <h3><%=name%></h3>
+        
+        <% if (contributions.length > 0) { %>
+        <div class='pg-info'>
+            <strong>Recent Contributions:</strong>
+            <ul>
+                <% for (var i = 0; i < Math.min(contributions.length, 5); i++) { %>
+                <li>
+                    <strong>$<%=contributions[i].amount%></strong>
+                    to
+                    <strong>
+                        <%=contributions[i].recipient_name%>
+                    </strong>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <% } %>
+    </div>
+    <span class='pg-highlighted'><%=name%></span>
+</span>

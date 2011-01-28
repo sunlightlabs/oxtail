@@ -122,8 +122,10 @@ def contextualize_text(request, pg_id=None):
     email = request.REQUEST.get('email', '').strip()
     text = request.REQUEST.get('text', '').strip()
     
+    ascii_text = filter(lambda x: x in string.printable, text)
+    
     record = Record(name=name, email=email)
-    record.set_hash(text)
+    record.set_hash(ascii_text)
     
     if email:
         record.email = email
@@ -134,7 +136,7 @@ def contextualize_text(request, pg_id=None):
             if orgs:
                 record.organization = orgs[0]['name']
     
-    full_text = "%s<br />\n%s<br />\n%s" % (name, record.organization, filter(lambda x: x in string.printable, text))
+    full_text = "%s<br />\n%s<br />\n%s" % (name, record.organization, ascii_text)
     
     if pg_id:
         data = urllib2.urlopen('http://poligraft.com/%s.json' % pg_id).read()

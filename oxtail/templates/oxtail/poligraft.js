@@ -104,6 +104,9 @@
         var senderName = sender.html();
         var senderAddress = sender.attr('email');
         
+        this.senderName = senderName;
+        this.senderAddress = senderAddress;
+        
         //Submit to Poligraft
         $.ajax({
             url: '{{ host }}{{ oxtail_path }}/contextualize',
@@ -168,12 +171,28 @@
                 
                 //sender rendering
                 var h3 = this.getSender().parent();
+                var senderText = '';
                 if (this.pgData.organization) {
-                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.pgData.organization) { return entity } else { return null; } })
-                    console.log(matches);
-                    var org = $('<span class="pg-org"> of ' + (matches.length ? message.templates.label(matches[0]) : message.pgData.organization) + '</span>');
-                    h3.append(org);
+                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.pgData.organization && entity.tdata_id) { return entity } else { return null; } });
+                    senderText += '<span class="pg-org"> of ' + (matches.length ? message.templates.label(matches[0]) : message.pgData.organization) + '</span>';
+                    
                 }
+                
+                if (this.senderName) {
+                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.senderName && entity.tdata_id) { return entity } else { return null; } });
+                    
+                    if (matches.length) {
+                        this.getSender().hide();
+                        senderText = '<span class="pg-sender">' + message.templates.label(matches[0]) + '</span>' + senderText;
+                    } else if (message.pgData.sender_info.length) {
+                        this.getSender().hide();
+                        senderText = '<span class="pg-sender">' + message.templates.label_simple({name: message.senderName, contributions: message.pgData.sender_info}) + '</span>' + senderText;
+                    }
+                }
+                    
+                var senderEl = $(senderText);
+                h3.append(senderEl);
+                
                 h3.parents('.iw').css('overflow', 'visible')
                 
                 div.find('.pg-wrapper').add(h3.find('.pg-wrapper')).hover(function() {
@@ -211,7 +230,8 @@
     }
     
     PgMessage.prototype.templates = {
-        label: _.template("{% filter escapejs %}{% include 'oxtail/item_label.mt.html' %}{% endfilter %}")
+        label: _.template("{% filter escapejs %}{% include 'oxtail/item_label.mt.html' %}{% endfilter %}"),
+        label_simple: _.template("{% filter escapejs %}{% include 'oxtail/item_label_simple.mt.html' %}{% endfilter %}")
     }
     
     

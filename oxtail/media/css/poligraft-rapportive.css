@@ -15,6 +15,7 @@
     font-style: normal;
     text-decoration: none;
     white-space: normal;
+    color: #333 !important;
 }
 .pg-insert h3 {
     margin: 0px;
@@ -61,9 +62,11 @@
     text-decoration: underline;
 }
 
+.pg-org, .pg-org span, .pg-sender, .pg-sender span {
+    top: 0px;
+}
 .pg-org, .pg-org span {
     font-weight: normal;
-    top: 0px;
 }
 
 .iw {
