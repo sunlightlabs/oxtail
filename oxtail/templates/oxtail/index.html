@@ -4,6 +4,9 @@
         <title>Oxtail bookmarklet demo</title>
     </head>
     <body>
+        <h1>Oxtail</h1>
+        <ul>
+    	<li>
         <a href="javascript:void(window.loadOxtail = function(document) {
             if (!document) return;
             {% include 'oxtail/button_adder.js' %}
@@ -12,5 +15,9 @@
         }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">
             Oxtail Bookmarklet
         </a>
+        </li>
+        <li><a href="/gmail/oxtail.crx">Chrome Extension</a></li>
+        <li><a href="/gmail/oxtail.xpi">Firefox 3.x Extension</a></li>
+        </ul>
     </body>
 </html>
