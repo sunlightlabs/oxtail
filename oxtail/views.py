@@ -141,7 +141,7 @@ def contextualize_text(request, pg_id=None):
     if pg_id:
         data = urllib2.urlopen('http://poligraft.com/%s.json' % pg_id).read()
     else:
-        data = urllib2.urlopen('http://poligraft.com/poligraft', urlencode({'json':1, 'text': full_text})).read()
+        data = urllib2.urlopen('http://poligraft.com/poligraft', urlencode({'json':1, 'text': full_text, 'suppresstext': 'true'})).read()
     jdata = json.loads(data)
     
     record.pg_data = data
