@@ -12,12 +12,12 @@ def process_td(id):
     
     if record.name and record.name not in [entity['name'] for entity in pg_data['entities'] if entity['tdata_id']]:
         if record.organization:
-            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=record.name, organization_ft=record.organization)
-            if results:
+            results = api._get_url_json('contributions.json', parse_json=False, contributor_ft=record.name, organization_ft=record.organization)
+            if json.loads(results):
                 record.td_sender_info = results
         
         if not record.td_sender_info:
-            results = api._get_url_json('contributions.json', cycle=settings.LATEST_CYCLE, parse_json=False, contributor_ft=record.name)
+            results = api._get_url_json('contributions.json', parse_json=False, contributor_ft=record.name)
             record.td_sender_info = results
     
     record.td_processed = True
