@@ -59,6 +59,7 @@ def dump_normalizations(aliases_file, out_file):
     
     for line in reader:
         in_count += 1
+        
         normalizer = NORMALIZERS_BY_TYPE[line['type']]
         if normalizer:
             for normalization in normalizer(line['alias']):
