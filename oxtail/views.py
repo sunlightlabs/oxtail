@@ -9,7 +9,8 @@ from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
-from lookup import *
+from dbpedia import *
+from oxtail import matching
 
 from oxtail.tasks import *
 
@@ -72,7 +73,7 @@ def contextualize_text(request, pg_id=None):
     email = request.REQUEST.get('email', '').strip()
     text = request.REQUEST.get('text', '').strip()
     
-    full_text = filter(lambda x: x in string.printable, text)
+    full_text = str(filter(lambda x: x in string.printable, text))
     
     #if email:
     #    record.email = email
@@ -83,19 +84,19 @@ def contextualize_text(request, pg_id=None):
     #        if orgs:
     #            record.organization = orgs[0]['name']
     
-    # get real matches
-    matches = []
+    matches = matching.match(full_text)
     
-    out = {entities: []}
+    out = {'entities': []}
     for match in matches:
         out['entities'].append({
-            'entity_data': get_entity_data(match[0])
+            'matched_text': list(matches[match]),
+            'entity_data': get_entity_data(match)
         })
             
     if 'callback' in request.GET:
-        return HttpResponse('%s(%s)' % (request.GET['callback'], out), 'text/javascript')
+        return HttpResponse('%s(%s)' % (request.GET['callback'], json.dumps(out)), 'text/javascript')
     else:
-        return HttpResponse(out, mimetype="application/json")
+        return HttpResponse(json.dumps(out), mimetype="application/json")
 
 def entity_info(request, id):
     return HttpResponse(json.dumps(get_entity_data(id)), mimetype="application/json")

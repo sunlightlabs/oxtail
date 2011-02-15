@@ -12,7 +12,7 @@ def generate_entity_data(td_id):
     td_metadata = api.entity_metadata(td_id)
     
     struct = {
-        'id': td_id,
+        'id': td_metadata['id'],
         'name': str(standardize_name(td_metadata['name'], td_metadata['type'])),
         'raw_name': td_metadata['name'],
         'type': td_metadata['type'],
@@ -24,7 +24,7 @@ def generate_entity_data(td_id):
     
     struct['lobbying'] = fetch_lobbying(td_metadata)
     
-    struct['fundraisers'] = fetch_pt(td_metadata)
+    struct['upcoming_fundraisers'] = fetch_pt(td_metadata)
     
     return struct
 
@@ -63,7 +63,8 @@ def fetch_finance(td_metadata):
             'amount': float(s['amount']),
             'id': s['id'],
             'name': standardize_name(s['name'], 'industry'),
-            'slug': slugify(standardize_name(s['name'], 'industry'))
+            'slug': slugify(standardize_name(s['name'], 'industry')),
+            'type': 'industry',
         } for s in top_industries if s['should_show_entity']][:5]
         
         out['contribution_total'] = td_metadata['totals']['-1']['recipient_amount']
@@ -86,7 +87,8 @@ def fetch_lobbying(td_metadata):
                 'name': standardize_name(client['client_name'], 'organization'),
                 'slug': slugify(standardize_name(client['client_name'], 'organization')),
                 'count': client['count'],
-                'id': client['client_entity']
+                'id': client['client_entity'],
+                'type': 'organization',
             } for client in api.org_registrant_clients(td_id)][:5]
         else:
             out['top_issues'] = api.org_issues(td_id)[:5]
@@ -99,10 +101,11 @@ def fetch_lobbying(td_metadata):
         if out['is_lobbyist']:
             out['top_issues'] = api.org_issues(td_id)[:5]
             out['clients'] = [{
-                'name': standardize_name(client['name'], 'organization'),
-                'slug': slugify(standardize_name(client['name'], 'organization')),
+                'name': standardize_name(client['client_name'], 'organization'),
+                'slug': slugify(standardize_name(client['client_name'], 'organization')),
                 'count': client['count'],
-                'id': client['id']
+                'id': client['client_entity'],
+                'type': 'organization',
             } for client in api.indiv_clients(td_id)][:5]
         else:
             out['top_issues'] = None
@@ -119,6 +122,7 @@ def fetch_lobbying(td_metadata):
 
 def fetch_pt(td_metadata):
     if td_metadata['type'] == 'politician':
+        out = []
         crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', td_metadata['external_ids'])
         if crp_ids:
             crp_id = crp_ids[0]['id']
@@ -126,9 +130,13 @@ def fetch_pt(td_metadata):
             if pt_data:
                 upcoming = filter(lambda e: e['fields']['start_date'] >= "2010-01-26", pt_data)[:3]
                 
-                return [event['fields'] for event in upcoming]
+                for event in upcoming:
+                   entry = event['fields'].copy()
+                   entry['partytime_id'] = event['pk']
+                   out.append(entry)
+        return out
     else:
-        return {}
+        return None
     
 def process_td(id):
     record = Record.objects.get(pk=id)

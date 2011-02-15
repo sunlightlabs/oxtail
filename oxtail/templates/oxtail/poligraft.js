@@ -113,18 +113,10 @@
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
             data: {json: 1, text: text, name: senderName, email: senderAddress},
-            success: function(data) {
-                var endpoint = '{{ host }}{{ oxtail_path }}/contextualize/' + data.slug + '?callback=?'
-                var interval = setInterval(function() {
-                    $.getJSON(endpoint, function(realData) {
-                        if (realData.all_processed) {
-                            origMessage.pgData = realData;
-                            origMessage.pgState = 'fetched';
-                            clearInterval(interval);
-                            if (origMessage.getState() == 'fetched') callback();
-                        }
-                    })
-                }, 2000);
+            success: function(realData) {
+                origMessage.pgData = realData;
+                origMessage.pgState = 'fetched';
+                if (origMessage.getState() == 'fetched') callback();
             }
         });
         
@@ -161,9 +153,12 @@
                 var message = this;
                 
                 $.each(this.pgData.entities, function(num, entity) {
-                    if (!entity.tdata_id) return;
-                    var label = message.templates.label(entity);
-                    text = text.split(entity.name).join(label);
+                    var label = message.templates.label(entity.entity_data);
+                    for (var i = 0; i < entity.matched_text.length; i++) {
+                        if (entity.matched_text[i] != entity.entity_data.slug) {
+                            text = text.split(entity.matched_text[i]).join(label);
+                        }
+                    }
                 })
                 div.html(text);
                 
@@ -184,7 +179,7 @@
                     if (matches.length) {
                         this.getSender().hide();
                         senderText = '<span class="pg-sender">' + message.templates.label(matches[0]) + '</span>' + senderText;
-                    } else if (message.pgData.sender_info.length) {
+                    } else if (message.pgData.sender_info && message.pgData.sender_info.length) {
                         this.getSender().hide();
                         senderText = '<span class="pg-sender">' + message.templates.label_simple({name: message.senderName, contributions: message.pgData.sender_info}) + '</span>' + senderText;
                     }
@@ -216,6 +211,10 @@
     }
     
     PgMessage.prototype.remapIfNecessary = function() {
+        this.remapped = true;
+        return;
+        
+        // not running the remapping for now, since we're not doing aggregates using the new system
         if (this.remapped) return;
         var message = this;
         $.each(this.pgData.entities, function(num, entity) {
