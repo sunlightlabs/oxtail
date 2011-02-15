@@ -1,11 +1,136 @@
-from celery.task import task
 import json
 import urllib2
 from oxtail.models import Record
 from influence.api import api
+from influence.helpers import standardize_name
 from django.conf import settings
+from django.template.defaultfilters import slugify
 
-@task
+def get_entity_data(tdata_id):
+    return generate_entity_data(tdata_id)
+
+def generate_entity_data(td_id):
+    td_metadata = api.entity_metadata(td_id)
+    
+    struct = {
+        'id': td_id,
+        'name': str(standardize_name(td_metadata['name'], td_metadata['type'])),
+        'raw_name': td_metadata['name'],
+        'type': td_metadata['type'],
+        'bioguide_id': td_metadata['metadata'].get('bioguide_id', None)
+    }
+    struct['slug'] = slugify(struct['name'])
+    
+    struct['campaign_finance'] = fetch_finance(td_metadata)
+    
+    struct['lobbying'] = fetch_lobbying(td_metadata)
+    
+    struct['fundraisers'] = fetch_pt(td_metadata)
+    
+    return struct
+
+def fetch_finance(td_metadata):
+    td_id = td_metadata['id']
+    type = td_metadata['type']
+    out = {}
+    if type == 'organization' or type == 'industry':
+        recipient_breakdown = api.org_party_breakdown(td_id)
+        out['recipient_breakdown'] = {'dem': float(recipient_breakdown.get('Democrats', [0, 0])[1]), 'rep': float(recipient_breakdown.get('Republicans', [0, 0])[1]), 'other': float(recipient_breakdown.get('Other', [0, 0])[1])}
+        out['contributor_type_breakdown'] = {}
+        out['contributor_local_breakdown'] = {}
+        out['top_industries'] = []
+        
+        # for totals in TD, the 'contributor' and 'recipient' totals seem backwards, so I'm just going to call everything 'contribution' here
+        out['contribution_total'] = td_metadata['totals']['-1']['contributor_amount']
+    
+    elif type == 'individual':
+        recipient_breakdown = api.indiv_party_breakdown(td_id)
+        out['recipient_breakdown'] = {'dem': float(recipient_breakdown.get('Democrats', [0, 0])[1]), 'rep': float(recipient_breakdown.get('Republicans', [0, 0])[1]), 'other': float(recipient_breakdown.get('Other', [0, 0])[1])}
+        out['contributor_type_breakdown'] = None
+        out['contributor_local_breakdown'] = None
+        out['top_industries'] = None
+        
+        out['contribution_total'] = td_metadata['totals']['-1']['contributor_amount']
+    
+    elif type == 'politician':
+        out['recipient_breakdown'] = None
+        contributor_type_breakdown = api.pol_contributor_type_breakdown(td_id)
+        out['contributor_type_breakdown'] = {'individual': float(contributor_type_breakdown.get('Individuals', [0, 0])[1]), 'pac': float(contributor_type_breakdown.get('PACs', [0, 0])[1])}
+        contributor_local_breakdown = api.pol_local_breakdown(td_id)
+        out['contributor_local_breakdown'] = {'in_state': float(contributor_local_breakdown.get('in-state', [0, 0])[1]), 'out-of-state': float(contributor_local_breakdown.get('out-of-state', [0, 0])[1])}
+        
+        top_industries = api.pol_industries(td_id)
+        out['top_industries'] = [{
+            'amount': float(s['amount']),
+            'id': s['id'],
+            'name': standardize_name(s['name'], 'industry'),
+            'slug': slugify(standardize_name(s['name'], 'industry'))
+        } for s in top_industries if s['should_show_entity']][:5]
+        
+        out['contribution_total'] = td_metadata['totals']['-1']['recipient_amount']
+    
+    return out
+
+def fetch_lobbying(td_metadata):
+    td_id = td_metadata['id']
+    type = td_metadata['type']
+    out = {}
+    
+    if type == 'organization' or type == 'industry':
+        out['top_issues'] = api.org_issues(td_id)[:5]
+        out['expenditures'] = float(td_metadata['totals']['-1']['non_firm_spending']) + float(td_metadata['totals']['-1']['firm_income'])
+        out['is_lobbyist'] = False
+        if td_metadata['metadata']['lobbying_firm']:
+            out['top_issues'] = api.org_registrant_issues(td_id)[:5]
+            out['is_lobbying_firm'] = True
+            out['clients'] = [{
+                'name': standardize_name(client['client_name'], 'organization'),
+                'slug': slugify(standardize_name(client['client_name'], 'organization')),
+                'count': client['count'],
+                'id': client['client_entity']
+            } for client in api.org_registrant_clients(td_id)][:5]
+        else:
+            out['top_issues'] = api.org_issues(td_id)[:5]
+            out['is_lobbying_firm'] = False
+            out['clients'] = None
+    
+    elif type == 'individual':
+        out['is_lobbyist'] = bool(td_metadata['lobbying_years'])
+        out['is_lobbying_firm'] = None
+        if out['is_lobbyist']:
+            out['top_issues'] = api.org_issues(td_id)[:5]
+            out['clients'] = [{
+                'name': standardize_name(client['name'], 'organization'),
+                'slug': slugify(standardize_name(client['name'], 'organization')),
+                'count': client['count'],
+                'id': client['id']
+            } for client in api.indiv_clients(td_id)][:5]
+        else:
+            out['top_issues'] = None
+            out['clients'] = None
+    
+    elif type == 'politician':
+        out['is_lobbyist'] = None
+        out['is_lobbying_firm'] = None
+        out['top_issues'] = None
+        out['expenditures'] = None
+        out['is_lobbying_firm'] = None
+    
+    return out
+
+def fetch_pt(td_metadata):
+    if td_metadata['type'] == 'politician':
+        crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', td_metadata['external_ids'])
+        if crp_ids:
+            crp_id = crp_ids[0]['id']
+            pt_data = json.loads(urllib2.urlopen("http://politicalpartytime.org/json/%s/" % crp_id).read())
+            if pt_data:
+                upcoming = filter(lambda e: e['fields']['start_date'] >= "2010-01-26", pt_data)[:3]
+                
+                return [event['fields'] for event in upcoming]
+    else:
+        return {}
+    
 def process_td(id):
     record = Record.objects.get(pk=id)
     pg_data = json.loads(record.pg_data)
@@ -25,7 +150,6 @@ def process_td(id):
     # do an update rather than a save, to avoid race conditions
     Record.objects.filter(pk=id).update(td_sender_info=record.td_sender_info, td_processed=record.td_processed)
 
-@task
 def process_pt(id):
     record = Record.objects.get(pk=id)
     pg_data = json.loads(record.pg_data)
@@ -39,7 +163,6 @@ def process_pt(id):
     
     Record.objects.filter(pk=id).update(pt_data=json.dumps(results), pt_processed=True)
 
-@task
 def process_pt_item(tdata_id):
     info = api.entity_metadata(tdata_id)
     crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', info['external_ids'])
@@ -52,7 +175,6 @@ def process_pt_item(tdata_id):
             return (tdata_id, upcoming)
     return (tdata_id, [])
 
-@task
 def process_pg(id):
     record = Record.objects.get(pk=id)
     

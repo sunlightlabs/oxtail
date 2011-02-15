@@ -1,5 +1,2 @@
 pycrypto
 SPARQLWrapper
--e git+https://github.com/ask/celery.git@v2.2.2#egg=celery
--e git+https://github.com/ask/django-celery.git@v2.2.2#egg=djcelery
--e git+https://github.com/ask/django-kombu.git#egg=djkombu
