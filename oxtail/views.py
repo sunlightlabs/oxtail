@@ -8,6 +8,7 @@ import string
 from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
+from django.core.urlresolvers import reverse
 from lookup import *
 from oxtail.models import Record
 
@@ -26,8 +27,8 @@ def get_file_contents(filename):
 def raplet(request):
     host = {
         'host' : 'http://%s' % request.META['HTTP_HOST'],
-        'oxtail_path': getattr(settings, 'OXTAIL_PATH', '/gmail'),
-        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
+        'oxtail_path': reverse('oxtail_index')[:-1],
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
     }
     response = {
         'html': render_to_string('oxtail/poligraft.html', host),
@@ -44,8 +45,8 @@ def raplet(request):
 def oxtail_js(request):
     host = {
         'host' : 'http://%s' % request.META['HTTP_HOST'],
-        'oxtail_path': getattr(settings, 'OXTAIL_PATH', '/gmail'),
-        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', '/gmail/media')
+        'oxtail_path': reverse('oxtail_index')[:-1],
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
     }
     
     js = "\n".join([
@@ -56,6 +57,15 @@ def oxtail_js(request):
     ])
     
     return HttpResponse(js, 'text/javascript')
+
+def index(request):
+    host = {
+        'host' : 'http://%s' % request.META['HTTP_HOST'],
+        'oxtail_path': reverse('oxtail_index')[:-1],
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
+    }
+    
+    return direct_to_template(request, 'oxtail/index.html', extra_context=host)
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
@@ -119,13 +129,13 @@ class OxtailExtension(UserScriptExtension):
         return render_to_string('oxtail/crx.js', host)
 
 def oxtail_crx(request):
-    extension = OxtailExtension(request.META['HTTP_HOST'], getattr(settings, 'OXTAIL_PATH', '/gmail'))
+    extension = OxtailExtension(request.META['HTTP_HOST'], reverse('oxtail_index')[:-1])
     response = HttpResponse(mimetype='application/x-chrome-extension')
     extension.gen_crx(response)
     return response
 
 def oxtail_xpi(request):
-    extension = OxtailExtension(request.META['HTTP_HOST'], getattr(settings, 'OXTAIL_PATH', '/gmail'))
+    extension = OxtailExtension(request.META['HTTP_HOST'], reverse('oxtail_index')[:-1])
     response = HttpResponse(mimetype='application/x-xpinstall')
     extension.gen_xpi(response)
     return response

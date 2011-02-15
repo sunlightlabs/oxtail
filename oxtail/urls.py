@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     
     url(r'^entity/(?P<id>\w+)$', 'oxtail.views.entity_info', name='oxtail_entity_info'),
     
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/media'}),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/media'}, name="oxtail_media"),
     
     url(r'^$', 'oxtail.views.index', name='oxtail_index'),
 )
