@@ -10,7 +10,6 @@ from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from lookup import *
-from oxtail.models import Record
 
 from oxtail.tasks import *
 

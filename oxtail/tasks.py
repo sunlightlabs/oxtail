@@ -1,6 +1,5 @@
 import json
 import urllib2
-from oxtail.models import Record
 from influence.api import api
 from influence.helpers import standardize_name
 from django.conf import settings
