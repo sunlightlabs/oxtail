@@ -1,4 +1,5 @@
 *.pyc
 *.pem
+*.trie
 .project
 .pydevproject
