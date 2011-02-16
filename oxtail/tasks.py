@@ -5,11 +5,10 @@ from influence.helpers import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
 
-def get_entity_data(tdata_id):
-    return generate_entity_data(tdata_id)
-
-def generate_entity_data(td_id):
+def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
+    if not bool(td_metadata['totals']):
+        return None
     
     struct = {
         'id': td_metadata['id'],
@@ -20,13 +19,33 @@ def generate_entity_data(td_id):
     }
     struct['slug'] = slugify(struct['name'])
     
+    crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', td_metadata['external_ids'])
+    if crp_ids:
+        struct['crp_id'] = crp_ids[0]['id']
+    else:
+        struct['crp_id'] = None
+    
     struct['campaign_finance'] = fetch_finance(td_metadata)
     
     struct['lobbying'] = fetch_lobbying(td_metadata)
     
-    struct['upcoming_fundraisers'] = fetch_pt(td_metadata)
+    struct['upcoming_fundraisers'] = fetch_pt(td_metadata) if not skip_frequent else None
     
     return struct
+
+# rearranging imports to avoid circular import
+from oxtail import cache
+
+def get_entity_data(tdata_id):
+    cache_backend = getattr(settings, 'OXTAIL_CACHE', False)
+    if cache_backend:
+        entity = getattr(cache, 'get_%s_entity' % cache_backend)(tdata_id)
+        if entity:
+            return json.loads(entity)
+        else:
+            return None
+    else:
+        return generate_entity_data(tdata_id)
 
 def fetch_finance(td_metadata):
     td_id = td_metadata['id']
@@ -35,9 +54,9 @@ def fetch_finance(td_metadata):
     if type == 'organization' or type == 'industry':
         recipient_breakdown = api.org_party_breakdown(td_id)
         out['recipient_breakdown'] = {'dem': float(recipient_breakdown.get('Democrats', [0, 0])[1]), 'rep': float(recipient_breakdown.get('Republicans', [0, 0])[1]), 'other': float(recipient_breakdown.get('Other', [0, 0])[1])}
-        out['contributor_type_breakdown'] = {}
-        out['contributor_local_breakdown'] = {}
-        out['top_industries'] = []
+        out['contributor_type_breakdown'] = None
+        out['contributor_local_breakdown'] = None
+        out['top_industries'] = None
         
         # for totals in TD, the 'contributor' and 'recipient' totals seem backwards, so I'm just going to call everything 'contribution' here
         out['contribution_total'] = td_metadata['totals']['-1']['contributor_amount']

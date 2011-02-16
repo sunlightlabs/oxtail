@@ -153,9 +153,9 @@
                 var message = this;
                 
                 $.each(this.pgData.entities, function(num, entity) {
-                    var label = message.templates.label(entity.entity_data);
                     for (var i = 0; i < entity.matched_text.length; i++) {
                         if (entity.matched_text[i] != entity.entity_data.slug) {
+                            var label = message.templates.label($.extend({}, entity.entity_data, {'match_name': entity.matched_text[i]}));
                             text = text.split(entity.matched_text[i]).join(label);
                         }
                     }

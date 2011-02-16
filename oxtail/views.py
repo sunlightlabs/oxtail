@@ -88,9 +88,12 @@ def contextualize_text(request, pg_id=None):
     
     out = {'entities': []}
     for match in matches:
+        entity_data = get_entity_data(match)
+        if not entity_data:
+            continue
         out['entities'].append({
             'matched_text': list(matches[match]),
-            'entity_data': get_entity_data(match)
+            'entity_data': entity_data
         })
             
     if 'callback' in request.GET:

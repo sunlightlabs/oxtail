@@ -93,6 +93,8 @@ AGGREGATES_API_BASE_URL = "http://transparencydata.com/api/1.0/"
 
 OXTAIL_MEDIA_PATH = '/media/oxtail'
 
+OXTAIL_CACHE = 'postgres'
+
 try:
     from local_settings import *
 except:
