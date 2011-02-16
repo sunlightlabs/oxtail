@@ -46,7 +46,7 @@
             <ul>
                 <% for (var i = 0; i < upcoming_fundraisers.length; i++) { %>
                 <li>
-                    <%=upcoming_fundraisers[i].start_date%>: <a href="http://politicalpartytime.org/party/<%=upcoming_fundraisers[i].pk%>/"><strong><%=upcoming_fundraisers[i].make_checks_payable_to%></strong> at <strong><%=upcoming_fundraisers[i].venue%></strong></a>
+                    <%=upcoming_fundraisers[i].start_date%>: <a href="http://politicalpartytime.org/party/<%=upcoming_fundraisers[i].partytime_id%>/"><strong><%=upcoming_fundraisers[i].make_checks_payable_to%></strong> at <strong><%=upcoming_fundraisers[i].venue%></strong></a>
                 </li>
                 <% } %>
             </ul>

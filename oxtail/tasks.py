@@ -4,6 +4,7 @@ from influence.api import api
 from influence.helpers import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
+from datetime import date
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
@@ -147,7 +148,7 @@ def fetch_pt(td_metadata):
             crp_id = crp_ids[0]['id']
             pt_data = json.loads(urllib2.urlopen("http://politicalpartytime.org/json/%s/" % crp_id).read())
             if pt_data:
-                upcoming = filter(lambda e: e['fields']['start_date'] >= "2010-01-26", pt_data)[:3]
+                upcoming = filter(lambda e: e['fields']['start_date'] >= date.today().isoformat(), pt_data)[:3]
                 
                 for event in upcoming:
                    entry = event['fields'].copy()

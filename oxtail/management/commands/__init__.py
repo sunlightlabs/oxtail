@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from oxtail import cache
 from optparse import make_option
+from oxtail import tasks
+from oxtail import cache
 
 class CacheCommand(BaseCommand):
     option_list = BaseCommand.option_list + (
