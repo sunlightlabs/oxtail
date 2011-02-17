@@ -80,7 +80,7 @@
             }
             
             if (body.length > 0 && !body.eq(0).hasClass('pg-rendered')) {
-                parser.threads[hash][index].renderIfAvailable();
+                parser.threads[hash][index].fetchAndRender();
             }
         })
     }
@@ -282,14 +282,26 @@
         $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css" />')
     }
     
-    // On first run, we're on a message, so we can go ahead and run
-    window.poligraftParser.loadPage();
-    window.poligraftParser.fetchData();
+    var enablePoligraft = function() {
+        window.poligraftParser.loadPage();
+        window.poligraftParser.fetchData();
+        
+        // Unless we're using rapportive, rerun on hash change
+        if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
+            parent.onhashchange = function() {
+                window.poligraftParser.loadPage();
+            };
+        }
+        var button = $(document).find('#oxtail-submit').attr('value', 'Deactivate Oxtail');
+        button.get(0).onclick = null;
+        button.unbind('click').bind('click', function() {
+            window.poligraftEnabled = false;
+            parent.onhashchange = null;
+            button.attr('value', 'Reactivate Oxtail').unbind('click').bind('click', enablePoligraft);
+        })
+    }
     
-    // Unless we're using rapportive, rerun on hash change
-    if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
-        parent.onhashchange = function() {
-            window.poligraftParser.loadPage();
-        };
+    if (window.poligraftEnabled) {
+        enablePoligraft();
     }
 })(jQuery);

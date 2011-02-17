@@ -9,6 +9,7 @@ if (submit) {
             s.setAttribute('type', 'text/javascript');
             var parent = document.getElementById('oxtail-div');
             parent.appendChild(s);
+            document.defaultView.window.poligraftEnabled = true;
         }
     });
     submit.removeAttribute('disabled');
