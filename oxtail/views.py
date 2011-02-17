@@ -123,6 +123,7 @@ class OxtailExtension(UserScriptExtension):
     def __init__(self, host, oxtail_path):
         self.host = host
         self.oxtail_path = oxtail_path
+        self.description = '%s (%s)' % (self.description, host)
     
     def get_user_script(self):
         host = {
