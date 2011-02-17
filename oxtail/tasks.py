@@ -76,7 +76,7 @@ def fetch_finance(td_metadata):
         contributor_type_breakdown = api.pol_contributor_type_breakdown(td_id)
         out['contributor_type_breakdown'] = {'individual': float(contributor_type_breakdown.get('Individuals', [0, 0])[1]), 'pac': float(contributor_type_breakdown.get('PACs', [0, 0])[1])}
         contributor_local_breakdown = api.pol_local_breakdown(td_id)
-        out['contributor_local_breakdown'] = {'in_state': float(contributor_local_breakdown.get('in-state', [0, 0])[1]), 'out-of-state': float(contributor_local_breakdown.get('out-of-state', [0, 0])[1])}
+        out['contributor_local_breakdown'] = {'in_state': float(contributor_local_breakdown.get('in-state', [0, 0])[1]), 'out_of_state': float(contributor_local_breakdown.get('out-of-state', [0, 0])[1])}
         
         top_industries = api.pol_industries(td_id)
         out['top_industries'] = [{

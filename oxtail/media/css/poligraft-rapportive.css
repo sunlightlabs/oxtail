@@ -41,6 +41,12 @@
     margin-top: 8px;
     padding-top: 8px;
 }
+.pg-info .pg-item {
+    padding-top: 8px;
+}
+.pg-info .pg-item:first-child {
+    padding: 0px;
+}
 .pg-highlighted {
     background: #cceeff;
 }

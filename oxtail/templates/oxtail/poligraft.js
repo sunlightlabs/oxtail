@@ -28,6 +28,36 @@
         var func = new Function('obj', tmpl);
         return data ? func(data) : func;
     };
+    
+    // template formatting stuff
+    var template_helpers = {
+        'formatDollars': function(number) {
+            var out = [], counter = 0, part = true;
+            var digits = number.toFixed(0).split("");
+            while (part) {
+                part = (counter == 0 ? digits.slice(-3) : digits.slice(counter - 3, counter)).join("");
+                if (part) {
+                    out.unshift(part);
+                    counter -= 3;
+                }
+            }
+            return out.join(",");
+        },
+        'formatDate': function(date) {
+            var d = new Date(date);
+            return [
+                ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][d.getMonth()],
+                ' ',
+                d.getDate(),
+                ', ',
+                d.getFullYear()
+            ].join("");
+        },
+        'fixName': function(name) {
+            var n = name.split("");
+            return n[0] + '$+$+' + n.slice(1).join("");
+        }
+    }
 
     
     // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
@@ -155,11 +185,12 @@
                 $.each(this.pgData.entities, function(num, entity) {
                     for (var i = 0; i < entity.matched_text.length; i++) {
                         if (entity.matched_text[i] != entity.entity_data.slug) {
-                            var label = message.templates.label($.extend({}, entity.entity_data, {'match_name': entity.matched_text[i]}));
+                            var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i]}));
                             text = text.split(entity.matched_text[i]).join(label);
                         }
                     }
                 })
+                text = text.split("$+$+").join("");
                 div.html(text);
                 
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
