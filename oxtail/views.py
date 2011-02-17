@@ -109,7 +109,7 @@ from oxtail.extension import UserScriptExtension
 class OxtailExtension(UserScriptExtension):
     id = 'oxtail@sunlightfoundation.com'
     name = 'Oxtail'
-    version = '0.1'
+    version = '0.2'
     description = 'Oxtail implemented as a Chrome extension.'
     matches = [
         "http://mail.google.com/mail*",
