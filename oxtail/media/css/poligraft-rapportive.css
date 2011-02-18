@@ -74,6 +74,9 @@
 .pg-org, .pg-org span {
     font-weight: normal;
 }
+.pg-fake-paragraph {
+    margin: 1em 0px;
+}
 
 .iw {
     overflow: visible !important;

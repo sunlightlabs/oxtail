@@ -183,6 +183,15 @@
                 
                 this.remapIfNecessary();
                 
+                // hack to fix paragraphs
+                div.find('p').each(function() {
+                    var $this = $(this);
+                    var fakeP = $('<div class="pg-fake-paragraph">');
+                    fakeP.html($this.html());
+                    $this.replaceWith(fakeP);
+                })
+                
+                //do the replacing
                 var text = div.html();
                 var message = this;
                 
