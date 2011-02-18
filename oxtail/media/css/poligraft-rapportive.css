@@ -54,10 +54,10 @@
     background: none;
 }
 .pg-fetching {
-    background: #eeeeee url('../img/poligraft-slider.gif') no-repeat center center;
+    background: #eeeeee url('../img/loading.gif') no-repeat top right;
 }
 .pg-rendered {
-    background: #ffffff url('../img/pglogo-gray.png') no-repeat center center;
+    background: #ffffff url('../img/ielogo.png') no-repeat top right;
 }
 
 .pg-wrapper a {

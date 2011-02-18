@@ -287,7 +287,6 @@
             window.poligraftParser.loadPage();
             
             var captureChanges = function(evt) {
-                console.log(evt);
                 if (evt.target.className == 'mD') {
                     setTimeout(function() {
                         window.poligraftParser.loadPage();
@@ -296,12 +295,12 @@
             }
             
             $('.pg-activated').each(function() {
-                this.removeEventListener('DOMNodeInserted', captureChanges);
+                this.removeEventListener('DOMNodeInserted', captureChanges, false);
             })
             
             $('.nH.hx').each(function() {
                 $(this).addClass('pg-activated');
-                this.addEventListener("DOMNodeInserted", captureChanges);
+                this.addEventListener("DOMNodeInserted", captureChanges, false);
             });
         };
         
