@@ -281,16 +281,35 @@
     if (!stylesLoaded) {
         $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css" />')
     }
-    
+        
     var enablePoligraft = function() {
-        window.poligraftParser.loadPage();
-        window.poligraftParser.fetchData();
+        var run = function() {
+            window.poligraftParser.loadPage();
+            
+            var captureChanges = function(evt) {
+                console.log(evt);
+                if (evt.target.className == 'mD') {
+                    setTimeout(function() {
+                        window.poligraftParser.loadPage();
+                    }, 250);
+                }
+            }
+            
+            $('.pg-activated').each(function() {
+                this.removeEventListener('DOMNodeInserted', captureChanges);
+            })
+            
+            $('.nH.hx').each(function() {
+                $(this).addClass('pg-activated');
+                this.addEventListener("DOMNodeInserted", captureChanges);
+            });
+        };
+        
+        run();
         
         // Unless we're using rapportive, rerun on hash change
         if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
-            parent.onhashchange = function() {
-                window.poligraftParser.loadPage();
-            };
+            parent.onhashchange = run;
         }
         var button = $(document).find('#oxtail-submit').attr('value', 'Deactivate Oxtail');
         button.get(0).onclick = null;
