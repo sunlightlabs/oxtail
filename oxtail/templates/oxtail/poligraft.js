@@ -58,6 +58,10 @@
             return n[0] + '$+$+' + n.slice(1).join("");
         }
     }
+    
+    var regexpEscape = function(text) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    }
 
     
     // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
@@ -182,15 +186,24 @@
                 var text = div.html();
                 var message = this;
                 
+                var match_strings = [];
+                var match_labels = {};
                 $.each(this.pgData.entities, function(num, entity) {
                     for (var i = 0; i < entity.matched_text.length; i++) {
                         if (entity.matched_text[i] != entity.entity_data.slug) {
                             var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i]}));
-                            text = text.split(entity.matched_text[i]).join(label);
+                            match_strings.push(regexpEscape(entity.matched_text[i]));
+                            match_labels[entity.matched_text[i]] = label;
                         }
                     }
                 })
-                text = text.split("$+$+").join("");
+                
+                var text_split = text.split(RegExp('(' + match_strings.join('|') + ')(?![^<>]*?>)'));
+                for (var i = 1; i < text_split.length; i += 2) {
+                    text_split[i] = match_labels[text_split[i]];
+                }
+                text = text_split.join("");
+                
                 div.html(text);
                 
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
