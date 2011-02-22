@@ -44,7 +44,9 @@ def update_pt_cache(get_entity_by_crp, write, verbose=False):
     if verbose: print "Filtering events..."
     events = [row for row in reader if row['Start_Date'] >= today]
     if verbose: print "Grouping and formatting events..."
-    for crp_id, pol_events in itertools.groupby(events, lambda e: e['CRP_ID'].strip()):
+    group_func = lambda e: e['CRP_ID'].strip()
+    sorted_events = sorted(events, key=group_func)
+    for crp_id, pol_events in itertools.groupby(sorted_events, group_func):
         sorted_events = sorted(pol_events, cmp=lambda a, b: cmp(a['Start_Date'], b['Start_Date']))[:3]
         formatted_events = [{
             "start_time": event['Start_Time'],
