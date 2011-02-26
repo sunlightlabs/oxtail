@@ -3,13 +3,15 @@ from django.http import HttpResponse
 import json
 from urllib import urlencode
 import os
-import urllib2
+import urllib, urllib2
+import base64
 import string
 from django.conf import settings
 from oxtail.decorators import cors_allow_all
 from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from dbpedia import *
+from itertools import groupby
 from oxtail import matching
 
 from oxtail.tasks import *
@@ -69,20 +71,9 @@ def index(request):
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
-    name = request.REQUEST.get('name', '').strip()
-    email = request.REQUEST.get('email', '').strip()
     text = request.REQUEST.get('text', '').strip()
     
     full_text = str(filter(lambda x: x in string.printable, text))
-    
-    #if email:
-    #    record.email = email
-    #    parts = email.split("@")
-    #    if len(parts) > 1:
-    #        domain = parts[1]
-    #        orgs = lookup_domain(domain)
-    #        if orgs:
-    #            record.organization = orgs[0]['name']
     
     matches = matching.match(full_text)
     
@@ -103,6 +94,63 @@ def contextualize_text(request, pg_id=None):
 
 def entity_info(request, id):
     return HttpResponse(json.dumps(get_entity_data(id)), mimetype="application/json")
+
+def sender_info(request):
+    name = request.REQUEST.get('name', '').strip()
+    email = request.REQUEST.get('email', '').strip()
+    organization = None
+    
+    out = {}
+    
+    organization = ''
+    org_info = None
+    if email:
+        parts = email.split("@")
+        if len(parts) > 1:
+            domain = parts[1]
+            orgs = lookup_domain(domain)
+            if orgs:
+                organization = orgs[0]['name']
+                matches = matching.match(organization)
+                if matches:
+                    org_info = get_entity_data(matches.keys()[0])
+    
+    results = None
+    if name and organization:
+        results = api._get_url_json('contributions.json', parse_json=True, contributor_ft=name, organization_ft=organization)
+    
+    if name and not results:
+        results = api._get_url_json('contributions.json', parse_json=True, contributor_ft=name)
+    
+    sender_info = []
+    if results:
+        keyfunc = lambda r: (r['contributor_city'], r['contributor_state'])
+        results = sorted(results, key=keyfunc)
+        for location, result_iter in groupby(results, key=keyfunc):
+            result = list(result_iter)
+            sender_info.append({
+                'city': string.capwords(location[0]),
+                'state': location[1].upper(),
+                'total': sum([float(r['amount']) for r in result]),
+                'dem_total': sum([float(r['amount']) for r in result if r['recipient_party'] == 'D']),
+                'rep_total': sum([float(r['amount']) for r in result if r['recipient_party'] == 'R']),
+                'count': len(result),
+                'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'contributor_state': location[1].upper()}))
+            })
+    
+    out = {
+        'name': name,
+        'email': email,
+        'sender_info': sender_info,
+        'url': base64.b64encode(urllib.urlencode({'contributor_ft': name})),
+        'organization': organization,
+        'org_info': org_info
+    }
+    
+    if 'callback' in request.GET:
+        return HttpResponse('%s(%s)' % (request.GET['callback'], json.dumps(out)), 'text/javascript')
+    else:
+        return HttpResponse(json.dumps(out), mimetype="application/json")
 
 # Browser extension code
 from oxtail.extension import UserScriptExtension

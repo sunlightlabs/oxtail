@@ -146,31 +146,29 @@
             url: '{{ host }}{{ oxtail_path }}/contextualize',
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
-            data: {json: 1, text: text, name: senderName, email: senderAddress},
+            data: {json: 1, text: text},
             success: function(realData) {
                 origMessage.pgData = realData;
                 origMessage.pgState = 'fetched';
-                if (origMessage.getState() == 'fetched') callback();
+                callback();
             }
         });
         
         //Get sender information
-        /* 
         var sender = this.getSender();
         var senderName = sender.html();
         var senderAddress = sender.attr('email');
         $.ajax({
-            url: '{{ host }}{{ oxtail_path }}/person_info.json',
+            url: '{{ host }}{{ oxtail_path }}/sender_info',
             type: 'GET',
             dataType: 'jsonp',
             data: {name: senderName, email: senderAddress},
             success: function(data) {
                 origMessage.senderData = data;
                 origMessage.senderState = 'fetched';
-                if (origMessage.getState() == 'fetched') callback();
+                callback();
             }
         })
-        */
     }
     
     PgMessage.prototype.renderIfAvailable = function() {
@@ -217,40 +215,43 @@
                 
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
                 
-                //sender rendering
-                var h3 = this.getSender().parent();
-                var senderText = '';
-                if (this.pgData.organization) {
-                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.pgData.organization && entity.tdata_id) { return entity } else { return null; } });
-                    senderText += '<span class="pg-org"> of ' + (matches.length ? message.templates.label(matches[0]) : message.pgData.organization) + '</span>';
-                    
-                }
-                
-                if (this.senderName) {
-                    var matches = $.map(this.pgData.entities, function(entity) { if (entity.name == message.senderName && entity.tdata_id) { return entity } else { return null; } });
-                    
-                    if (matches.length) {
-                        this.getSender().hide();
-                        senderText = '<span class="pg-sender">' + message.templates.label(matches[0]) + '</span>' + senderText;
-                    } else if (message.pgData.sender_info && message.pgData.sender_info.length) {
-                        this.getSender().hide();
-                        senderText = '<span class="pg-sender">' + message.templates.label_simple({name: message.senderName, contributions: message.pgData.sender_info}) + '</span>' + senderText;
-                    }
-                }
-                    
-                var senderEl = $(senderText);
-                h3.append(senderEl);
-                
-                h3.parents('.iw').css('overflow', 'visible')
-                
-                div.find('.pg-wrapper').add(h3.find('.pg-wrapper')).hover(function() {
+                div.find('.pg-wrapper').hover(function() {
                     $(this).children('.pg-insert').show();
                 }, function() {
                     $(this).children('.pg-insert').hide();
                 })
                 
-            } else if (this.getState() == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
+            } else if (this.pgState == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
                 div.addClass('pg-fetching');
+            }
+            
+            var senderParent = this.getSender().parent();
+            if (this.senderState == 'fetched' && !senderParent.hasClass('pg-sender-rendered') && senderParent.length > 0) {
+                senderParent.addClass('pg-sender-rendered');
+                
+                //sender rendering
+                var h3 = senderParent;
+                var senderText = '';
+                if (this.senderData.organization) {
+                    senderText += '<span class="pg-org"> of ' + (this.senderData.org_info ? this.templates.label($.extend({}, template_helpers, this.senderData.org_info, {'match_name': this.senderData.organization})) : this.senderData.organization) + '</span>';
+                    
+                }
+                
+                if (this.senderData.name) {                    
+                    this.getSender().hide();
+                    senderText = '<span class="pg-sender">' + this.templates.label_simple($.extend({}, template_helpers, this.senderData)) + '</span>' + senderText;
+                }
+                    
+                var senderEl = $(senderText);
+                h3.append(senderEl);
+                
+                h3.parents('.iw').css('overflow', 'visible');
+                
+                h3.find('.pg-wrapper').hover(function() {
+                    $(this).children('.pg-insert').show();
+                }, function() {
+                    $(this).children('.pg-insert').hide();
+                })
             }
         }
     }

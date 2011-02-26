@@ -2,20 +2,28 @@
     <div class='pg-insert'>
         <h3><%=name%></h3>
         
-        <% if (contributions.length > 0) { %>
+        <% if (sender_info.length == 0) { %>
         <div class='pg-info'>
-            <strong>Recent Contributions:</strong>
-            <ul>
-                <% for (var i = 0; i < Math.min(contributions.length, 5); i++) { %>
-                <li>
-                    <strong>$<%=contributions[i].amount%></strong>
-                    to
+            <strong>We found no contributions by any individuals named <em><%=name%></em>.</strong>
+        </div>
+        <% } else if (sender_info.length > 0 && sender_info.length < 6) { %>
+        <div class='pg-info'>
+            <strong>We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed:</strong>
+            <ul class='pg-contrib-list'>
+                <% for (var i = 0; i < sender_info.length; i++) { %>
+                <li style="background-image: url('http://chart.apis.google.com/chart?cht=p&chf=bg,s,FFFFFF&chp=1.57&chs=35x35&chco=3072F3|DB2A3F&chd=t:<%=sender_info[i].dem_total%>,<%=sender_info[i].rep_total%>')">
+                    <strong>$<%=formatDollars(sender_info[i].total)%></strong>
+                    in total contributions from a <a href="http://transparencydata.com/contributions/#<%=sender_info[i].url%>"><%=name%> in
                     <strong>
-                        <%=contributions[i].recipient_name%>
-                    </strong>
+                        <%=(sender_info[i].city ? sender_info[i].city + ', ' : '') + sender_info[i].state%>
+                    </strong></a>
                 </li>
                 <% } %>
             </ul>
+        </div>
+        <% } else { %>
+        <div class='pg-info'>
+            <strong>We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed. <a href="http://transparencydata.com/contributions/#<%=url%>">See a list of their contributions on TransparencyData.com</a>.</strong>
         </div>
         <% } %>
     </div>

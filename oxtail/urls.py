@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^oxtail.xpi$', 'oxtail.views.oxtail_xpi', name='oxtail_xpi'),
         
     url(r'^contextualize$', 'oxtail.views.contextualize_text', name='contextualize'),
+    url(r'^sender_info$', 'oxtail.views.sender_info', name='sender_info'),
     
     url(r'^entity/(?P<id>\w+)$', 'oxtail.views.entity_info', name='oxtail_entity_info'),
     
