@@ -113,7 +113,7 @@ def sender_info(request):
                 organization = orgs[0]['name']
                 matches = matching.match(organization)
                 if matches:
-                    org_info = get_entity_data(matches.keys()[0])
+                    org_info = get_entity_data(str(matches.keys()[0]))
     
     results = None
     if name and organization:
