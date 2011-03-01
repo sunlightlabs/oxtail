@@ -110,7 +110,7 @@
     }
     
     PgMessage.prototype.getDiv = function() {
-        return $(document).find('.Bk').eq(this.index).find('.ii.gt>div');
+        return $(document).find('.Bk').eq(this.index).find('.ii.gt>div').eq(0);
     }
     
     PgMessage.prototype.getSender = function() {
