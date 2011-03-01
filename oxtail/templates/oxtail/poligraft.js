@@ -286,8 +286,8 @@
     }
     
     PgMessage.prototype.templates = {
-        label: _.template("{% filter escapejs %}{% include 'oxtail/item_label.mt.html' %}{% endfilter %}"),
-        label_simple: _.template("{% filter escapejs %}{% include 'oxtail/item_label_simple.mt.html' %}{% endfilter %}")
+        label: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_label.mt.html' %}{% endspaceless %}{% endfilter %}"),
+        label_simple: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_label_simple.mt.html' %}{% endspaceless %}{% endfilter %}")
     }
     
     
