@@ -251,6 +251,9 @@
                     $(this).children('.pg-insert').show();
                 }, function() {
                     $(this).children('.pg-insert').hide();
+                }).find('a').click(function() {
+                    window.open($(this).attr('href'));
+                    return false;
                 })
             }
         }
