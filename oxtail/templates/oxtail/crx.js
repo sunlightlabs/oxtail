@@ -3,7 +3,7 @@ var oxtailInterval = setInterval(function() {
     var frame = doc.getElementById('canvas_frame');
     if (frame && frame.contentDocument) {
         var document = frame.contentDocument;
-        if (document.getElementById('guser')) {
+        if (document.getElementsByClassName('GcwpPb-MEmzyf').length) {
             clearInterval(oxtailInterval);
             {% include 'oxtail/button_adder.js' %}
             
