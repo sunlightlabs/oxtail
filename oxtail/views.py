@@ -93,7 +93,10 @@ def contextualize_text(request, pg_id=None):
         return HttpResponse(json.dumps(out), mimetype="application/json")
 
 def entity_info(request, id):
-    return HttpResponse(json.dumps(get_entity_data(id)), mimetype="application/json")
+    if request.GET.get('generate', False):
+        return HttpResponse(json.dumps(generate_entity_data(id)), mimetype="application/json")
+    else:
+        return HttpResponse(json.dumps(get_entity_data(id)), mimetype="application/json")
 
 def sender_info(request):
     name = request.REQUEST.get('name', '').strip()

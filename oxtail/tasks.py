@@ -5,6 +5,7 @@ from influence.names import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
+from name_cleaver.name_cleaver import PoliticianNameCleaver
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
@@ -19,6 +20,9 @@ def generate_entity_data(td_id, skip_frequent=False):
         'bioguide_id': td_metadata['metadata'].get('bioguide_id', None)
     }
     struct['slug'] = slugify(struct['name'])
+    if struct['type'] == 'politician':
+        poli_name = PoliticianNameCleaver(td_metadata['name']).parse().plus_metadata(td_metadata['metadata']['party'], td_metadata['metadata']['state'])
+        struct['name'] = str(poli_name)
     
     crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', td_metadata['external_ids'])
     if crp_ids:
