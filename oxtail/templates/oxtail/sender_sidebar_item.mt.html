@@ -1,0 +1,30 @@
+<div class='pg-panel-item' data-pg-pos='<%=position%>' data-pg-id='<%=name%>_<%=email%>'>
+    <h3><span class='pg-label'>Sender:</span>&nbsp;<%=name%></h3>
+    
+    <div class='pg-panel-content'>
+        <% if (sender_info.length == 0) { %>
+        <div class='pg-info'>
+            <strong>We found no contributions by any individuals named <em><%=name%></em>.</strong>
+        </div>
+        <% } else if (sender_info.length > 0 && sender_info.length < 6) { %>
+        <div class='pg-info'>
+            <strong>We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed:</strong>
+            <ul class='pg-contrib-list'>
+                <% for (var i = 0; i < sender_info.length; i++) { %>
+                <li style="background-image: url('http://chart.apis.google.com/chart?cht=p&chf=bg,s,FFFFFF&chp=1.57&chs=35x35&chco=3072F3|DB2A3F&chd=t:<%=percents(sender_info[i].dem_total, sender_info[i].rep_total)%>')">
+                    <strong>$<%=formatDollars(sender_info[i].total)%></strong>
+                    in total contributions from a <a href="http://transparencydata.com/contributions/#<%=sender_info[i].url%>"><%=name%> in
+                    <strong>
+                        <%=(sender_info[i].city ? sender_info[i].city + ', ' : '') + sender_info[i].state%>
+                    </strong></a>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <% } else { %>
+        <div class='pg-info'>
+            <strong>We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed. <a href="http://transparencydata.com/contributions/#<%=url%>">See a list of their contributions on TransparencyData.com</a>.</strong>
+        </div>
+        <% } %>
+    </div>
+</div>

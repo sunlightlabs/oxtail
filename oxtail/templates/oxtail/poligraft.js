@@ -56,6 +56,10 @@
         'fixName': function(name) {
             var n = name.split("");
             return n[0] + '$+$+' + n.slice(1).join("");
+        },
+        'percents': function(val1, val2) {
+            var sum = val1 + val2;
+            return (sum == 0 ? [0, 0] : [Math.round(100*val1/sum), Math.round(100*val2/sum)]).join(',');
         }
     }
     
@@ -67,6 +71,7 @@
     // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
     var PgParser = function() {
         this.threads = {};
+        this.people = {};
     }
     
     PgParser.prototype.loadPage = function() {
@@ -154,19 +159,68 @@
             }
         });
         
-        //Get sender information
+        //Get sender information, if necessary, otherwise use cached
         var sender = this.getSender();
         var senderName = sender.html();
         var senderAddress = sender.attr('email');
-        $.ajax({
-            url: '{{ host }}{{ oxtail_path }}/sender_info',
-            type: 'GET',
-            dataType: 'jsonp',
-            data: {name: senderName, email: senderAddress},
-            success: function(data) {
-                origMessage.senderData = data;
-                origMessage.senderState = 'fetched';
-                callback();
+        var senderId = senderName + '_' + senderAddress
+        if (window.poligraftParser.people[senderId]) {
+            origMessage.senderData = window.poligraftParser.people[senderId];
+            origMessage.senderState = 'fetched';
+            callback();
+        } else {
+            $.ajax({
+                url: '{{ host }}{{ oxtail_path }}/sender_info',
+                type: 'GET',
+                dataType: 'jsonp',
+                data: {name: senderName, email: senderAddress},
+                success: function(data) {
+                    // add to cache
+                    window.poligraftParser.people[senderId] = data;
+                    
+                    // do callback
+                    origMessage.senderData = data;
+                    origMessage.senderState = 'fetched';
+                    callback();
+                }
+            })
+        }
+    }
+    
+    // non-message-specific helper function for rendering messages
+    var fixPanel = function(pgPanel) {
+        var idxs = [];
+        var ids = [];
+        pgPanel.find('.pg-panel-item').each(function(idx, node) {
+            var $node = $(node);
+            idxs[idxs.length] = parseInt($node.attr('data-pg-pos'));
+            ids[ids.length] = $node.attr('data-pg-id');
+        }).show();
+        idxs.sort(function(a,b) { return a - b });
+        $.each(idxs, function(n, idx) {
+            var node = pgPanel.find('div[data-pg-pos=' + idx + ']');
+            pgPanel.append(node);
+        })
+        $.each(ids, function(n, id) {
+            var nodes = pgPanel.find('div[data-pg-id=' + id + ']');
+            if (nodes.length > 1) {
+                nodes.slice(1).hide();
+            }
+        })
+        
+        // do the expanding and collapsing
+        var items = pgPanel.find('.pg-panel-item:visible');
+        items.eq(0).removeClass('pg-collapsed').show();
+        items.slice(1).addClass('pg-collapsed').find('.pg-panel-content').hide();
+        
+        items.find('h3').unbind('click').bind('click', function() {
+            console.log('clicked');
+            var parent = $(this).parent();
+            console.log(parent);
+            if (parent.hasClass('pg-collapsed')) {
+                parent.removeClass('pg-collapsed').find('.pg-panel-content').slideDown('fast');
+            } else {
+                parent.addClass('pg-collapsed').find('.pg-panel-content').slideUp('fast');
             }
         })
     }
@@ -255,6 +309,16 @@
                     window.open($(this).attr('href'));
                     return false;
                 })
+                
+                var pgPanel = $(document).find('.pg-panel');
+                if (pgPanel.length == 0) {
+                    var sidePanel = $(document).find('.Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
+                    pgPanel = $('<div class="pg-panel"></div>');
+                    sidePanel.children('.nH').eq(0).after(pgPanel);
+                }
+                
+                pgPanel.append(this.templates.sender_sidebar($.extend({}, template_helpers, this.senderData, {'position': this.index})));
+                fixPanel(pgPanel);
             }
         }
     }
@@ -286,8 +350,9 @@
     }
     
     PgMessage.prototype.templates = {
-        label: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_label.mt.html' %}{% endspaceless %}{% endfilter %}"),
-        label_simple: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_label_simple.mt.html' %}{% endspaceless %}{% endfilter %}")
+        label: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_popup.mt.html' %}{% endspaceless %}{% endfilter %}"),
+        label_simple: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_popup_simple.mt.html' %}{% endspaceless %}{% endfilter %}"),
+        sender_sidebar: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/sender_sidebar_item.mt.html' %}{% endspaceless %}{% endfilter %}")
     }
     
     

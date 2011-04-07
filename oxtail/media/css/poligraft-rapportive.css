@@ -17,11 +17,30 @@
     white-space: normal;
     color: #333 !important;
 }
+.pg-panel {
+    color: #333 !important;
+    font-size: 80%;
+}
 .pg-insert h3 {
     margin: 0px;
     padding: 0px;
 }
-.pg-insert ul {
+.pg-panel h3 {
+    margin: 0px;
+    margin-top: 10px;
+    margin-left: -16px;
+    padding: 4px;
+    padding-left: 20px;
+    background: #f7dd52;
+    cursor: pointer;
+}
+.pg-panel .pg-collapsed h3 {
+    background: #dddddd;
+}
+.pg-panel h3 .pg-label {
+    font-weight: normal;
+}
+.pg-insert ul, .pg-panel ul {
     padding: 0px !important;
     margin-top: 4px !important;
     margin-bottom: 0px !important;
@@ -29,11 +48,11 @@
     margin-left: 0px !important;
     list-style: square !important;
 }
-.pg-insert ul li {
+.pg-insert ul li, .pg-insert ul li {
     padding: 0px !important;
     margin-left: 15px !important;
 }
-.pg-insert img {
+.pg-insert img, .pg-panel img {
     border: 0px !important;
 }
 .pg-info {
@@ -47,8 +66,12 @@
 .pg-info .pg-item:first-child {
     padding: 0px;
 }
+.pg-panel .pg-info {
+    border-top: 0px;
+    margin-top: 0px;
+}
 .pg-highlighted {
-    background: #cceeff;
+    background: #f7dd52;
 }
 .pg-insert .pg-highlighted {
     background: none;
@@ -78,7 +101,7 @@
     margin: 1em 0px;
 }
 
-.pg-insert ul.pg-contrib-list li {
+ul.pg-contrib-list li {
     background-repeat: no-repeat;
     background-position: -10px -10px;
     overflow: visible;
