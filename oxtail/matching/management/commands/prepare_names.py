@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from name_cleaver.name_cleaver import PoliticianNameCleaver, RunningMatesNames
+from name_cleaver import PoliticianNameCleaver, RunningMatesNames
 from optparse import make_option
 from oxtail.matching import basic_normalizer
 import csv

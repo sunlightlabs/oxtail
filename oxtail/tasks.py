@@ -5,7 +5,7 @@ from influence.names import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
-from name_cleaver.name_cleaver import PoliticianNameCleaver
+from name_cleaver import PoliticianNameCleaver
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
