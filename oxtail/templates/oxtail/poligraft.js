@@ -297,9 +297,7 @@
                     
                 var senderEl = $(senderText);
                 h3.append(senderEl);
-                
-                h3.parents('.iw').css('overflow', 'visible');
-                
+                                
                 h3.find('.pg-org .pg-highlighted').hover(function() {
                     $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').addClass('pg-indicate-org');
                 }, function() {
