@@ -213,10 +213,8 @@
         items.eq(0).removeClass('pg-collapsed').show();
         items.slice(1).addClass('pg-collapsed').find('.pg-panel-content').hide();
         
-        items.find('h3').unbind('click').bind('click', function() {
-            console.log('clicked');
+        items.find('h3.pg-sender-name').unbind('click').bind('click', function() {
             var parent = $(this).parent();
-            console.log(parent);
             if (parent.hasClass('pg-collapsed')) {
                 parent.removeClass('pg-collapsed').find('.pg-panel-content').slideDown('fast');
             } else {
@@ -286,14 +284,15 @@
                 //sender rendering
                 var h3 = senderParent;
                 var senderText = '';
+                var senderId = this.senderData.name + '_' + this.senderData.email;
                 if (this.senderData.organization) {
-                    senderText += '<span class="pg-org"> of ' + (this.senderData.org_info ? this.templates.label($.extend({}, template_helpers, this.senderData.org_info, {'match_name': this.senderData.organization})) : this.senderData.organization) + '</span>';
+                    senderText += '<span class="pg-org"> of <span class="pg-highlighted" data-pg-id="' + senderId + '">' + this.senderData.organization + '</span></span>';
                     
                 }
                 
                 if (this.senderData.name) {                    
                     this.getSender().hide();
-                    senderText = '<span class="pg-sender">' + this.templates.label_simple($.extend({}, template_helpers, this.senderData)) + '</span>' + senderText;
+                    senderText = '<span class="pg-sender"><span class="pg-highlighted" data-pg-id="' + senderId + '">' + this.senderData.name + '</span></span>' + senderText;
                 }
                     
                 var senderEl = $(senderText);
@@ -301,23 +300,26 @@
                 
                 h3.parents('.iw').css('overflow', 'visible');
                 
-                h3.find('.pg-wrapper').hover(function() {
-                    $(this).children('.pg-insert').show();
+                h3.find('.pg-org .pg-highlighted').hover(function() {
+                    $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').addClass('pg-indicate-org');
                 }, function() {
-                    $(this).children('.pg-insert').hide();
-                }).find('a').click(function() {
-                    window.open($(this).attr('href'));
-                    return false;
+                    $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').removeClass('pg-indicate-org');
+                })
+                
+                h3.find('.pg-sender .pg-highlighted').hover(function() {
+                    $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').addClass('pg-indicate-sender');
+                }, function() {
+                    $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').removeClass('pg-indicate-sender');
                 })
                 
                 var pgPanel = $(document).find('.pg-panel');
                 if (pgPanel.length == 0) {
                     var sidePanel = $(document).find('.Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
-                    pgPanel = $('<div class="pg-panel"></div>');
+                    pgPanel = $(this.templates.sender_sidebar({}));
                     sidePanel.children('.nH').eq(0).after(pgPanel);
                 }
                 
-                pgPanel.append(this.templates.sender_sidebar($.extend({}, template_helpers, this.senderData, {'position': this.index})));
+                pgPanel.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates})));
                 fixPanel(pgPanel);
             }
         }
@@ -349,10 +351,17 @@
         this.remapped = true;
     }
     
+    var enableIncludes = function(tmpl) {
+        return function(data) {
+            return tmpl.call(data, $.extend(data, {'templates': PgMessage.prototype.templates}))
+        }
+    }
+    
     PgMessage.prototype.templates = {
-        label: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_popup.mt.html' %}{% endspaceless %}{% endfilter %}"),
-        label_simple: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_popup_simple.mt.html' %}{% endspaceless %}{% endfilter %}"),
-        sender_sidebar: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/sender_sidebar_item.mt.html' %}{% endspaceless %}{% endfilter %}")
+        label: enableIncludes(_.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/item_popup.mt.html' %}{% endspaceless %}{% endfilter %}")),
+        sender_sidebar: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/sender_sidebar.mt.html' %}{% endspaceless %}{% endfilter %}"),
+        sender_sidebar_item: enableIncludes(_.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/sender_sidebar_item.mt.html' %}{% endspaceless %}{% endfilter %}")),
+        org_info: _.template("{% filter escapejs %}{% spaceless %}{% include 'oxtail/org_info.mt.html' %}{% endspaceless %}{% endfilter %}")
     }
     
     

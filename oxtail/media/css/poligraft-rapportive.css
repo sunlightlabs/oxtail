@@ -21,11 +21,11 @@
     color: #333 !important;
     font-size: 80%;
 }
-.pg-insert h3 {
+.pg-insert h3, .pg-panel h3 {
     margin: 0px;
     padding: 0px;
 }
-.pg-panel h3 {
+.pg-panel h3.pg-sender-name {
     margin: 0px;
     margin-top: 10px;
     margin-left: -16px;
@@ -34,8 +34,11 @@
     background: #f7dd52;
     cursor: pointer;
 }
-.pg-panel .pg-collapsed h3 {
+.pg-panel .pg-collapsed h3.pg-sender-name {
     background: #dddddd;
+}
+.pg-panel .pg-indicate-org h3.pg-sender-name, .pg-panel .pg-indicate-sender h3.pg-sender-name {
+    background: #f7dd52 !important;
 }
 .pg-panel h3 .pg-label {
     font-weight: normal;
@@ -48,7 +51,7 @@
     margin-left: 0px !important;
     list-style: square !important;
 }
-.pg-insert ul li, .pg-insert ul li {
+.pg-insert ul li, .pg-panel ul li {
     padding: 0px !important;
     margin-left: 15px !important;
 }
@@ -83,11 +86,11 @@
     background: #ffffff url('../img/ielogo.png') no-repeat top right;
 }
 
-.pg-wrapper a {
+.pg-wrapper a, .pg-panel a {
     text-decoration: none;
     color: #228899;
 }
-.pg-wrapper a:hover {
+.pg-wrapper a:hover, .pg-panel a:hover {
     text-decoration: underline;
 }
 
@@ -109,6 +112,24 @@ ul.pg-contrib-list li {
     margin-left: 0px !important;
     padding-left: 20px !important;
     padding-bottom: 5px !important;
+}
+
+.pg-panel-item.pg-indicate-org .pg-org-data {
+    background: #fbeea8;
+}
+
+.pg-panel-item.pg-indicate-sender .pg-sender-data {
+    background: #fbeea8;
+}
+
+.pg-panel-header {
+    background: #ffffff url('../img/ielogo.png') no-repeat top left;
+    padding-left: 50px;
+    font-size: 20px;
+    margin-top: 15px;
+}
+.pg-panel-header a {
+    color: #f7dd52;
 }
 
 .iw {
