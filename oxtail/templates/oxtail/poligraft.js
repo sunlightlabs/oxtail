@@ -374,25 +374,14 @@
     }
         
     var enablePoligraft = function() {
+        var bound = null;
         var run = function() {
             window.poligraftParser.loadPage();
             
-            var captureChanges = function(evt) {
-                if (evt.target.className == 'mD') {
-                    setTimeout(function() {
-                        window.poligraftParser.loadPage();
-                    }, 250);
-                }
-            }
-            
-            $('.pg-activated').each(function() {
-                this.removeEventListener('DOMNodeInserted', captureChanges, false);
-            })
-            
-            $('.nH.hx').each(function() {
-                $(this).addClass('pg-activated');
-                this.addEventListener("DOMNodeInserted", captureChanges, false);
-            });
+            clearInterval(bound);
+            bound = setInterval(function() {
+                window.poligraftParser.loadPage();
+            }, 1000);
         };
         
         run();
