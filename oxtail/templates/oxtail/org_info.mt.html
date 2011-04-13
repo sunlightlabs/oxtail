@@ -2,68 +2,65 @@
     <h3><%=name%></h3>
 </a>
 
-<% if (campaign_finance.contribution_total) { %>
-<div class='pg-item'><strong>$<%=formatDollars(campaign_finance.contribution_total)%> in contributions <%=(type == 'politician' ? 'received' : 'given')%></strong></div>
-<% } %>
-
-<% if (campaign_finance.recipient_breakdown && (campaign_finance.recipient_breakdown.dem || campaign_finance.recipient_breakdown.rep)) { %>
-<img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:<%=percents(campaign_finance.recipient_breakdown.dem,campaign_finance.recipient_breakdown.rep)%>&amp;chdl=Democrats|Republicans' alt='Chart for <%=name%>'>
-<% } %>
-
-<% if (campaign_finance.contributor_type_breakdown && (campaign_finance.contributor_type_breakdown.individual || campaign_finance.contributor_type_breakdown.pac)) { %>
-<img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:<%=percents(campaign_finance.contributor_type_breakdown.individual,campaign_finance.contributor_type_breakdown.pac)%>&amp;chdl=Individuals|PACs' alt='Chart for <%=name%>'>
-<% } %>
-
-<% if (campaign_finance.contributor_local_breakdown && (campaign_finance.contributor_local_breakdown.in_state || campaign_finance.contributor_local_breakdown.out_of_state)) { %>
-<img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=EFCC01|F2E388&amp;chd=t:<%=percents(campaign_finance.contributor_local_breakdown.in_state,campaign_finance.contributor_local_breakdown.out_of_state)%>&amp;chdl=In-state|Out-of-state' alt='Chart for <%=name%>'>
-<% } %>
-
-<% if (campaign_finance.top_industries && campaign_finance.top_industries.length > 0) { %>
-<div class='pg-info'>
-    <div class="pg-item">
-        <strong>Top Contributing Industries:</strong>
-        <ul>
-            <% for (var i = 0; i < campaign_finance.top_industries.length; i++) { %>
-            <li><a href='http://influenceexplorer.com/<%=campaign_finance.top_industries[i].type%>/<%=campaign_finance.top_industries[i].slug%>/<%=campaign_finance.top_industries[i].id%>'><%=campaign_finance.top_industries[i].name%></a></li>
-            <% } %>
-        </ul>
-    </div>
-</div>
-<% } %>
-
-<% if ((lobbying.clients && lobbying.clients.length > 0) || (lobbying.top_issues && lobbying.top_issues.length > 0) || lobbying.expenditures) { %>
-<div class='pg-info'>
-    <% if (lobbying.expenditures) { %><div class="pg-item"><strong>$<%=formatDollars(lobbying.expenditures)%> spent on lobbying</strong></div><% } %>
-    
-    <% if (lobbying.top_issues && lobbying.top_issues.length > 0) { %>
-    <div class="pg-item">
-        <strong>Top Issues Lobbied:</strong>
-        <ul>
-            <% for (var i = 0; i < lobbying.top_issues.length; i++) { %>
-            <li><%=lobbying.top_issues[i].issue%></li>
-            <% } %>
-        </ul>
-    </div>
+<ul class="employersInfo">
+    <% if (campaign_finance.contribution_total) { %>
+        <li class='pg-item'>
+            <h4>$<%=formatDollars(campaign_finance.contribution_total)%> in contributions <%=(type == 'politician' ? 'received' : 'given')%></h4>
+        </li>
     <% } %>
-    
-    <% if (lobbying.clients && lobbying.clients.length > 0) { %>
-    <div class="pg-item">
-        <strong>Lobbied on Behalf of:</strong>
-        <ul>
-            <% for (var i = 0; i < lobbying.clients.length; i++) { %>
-            <li><a href='http://influenceexplorer.com/<%=lobbying.clients[i].type%>/<%=lobbying.clients[i].slug%>/<%=lobbying.clients[i].id%>'><%=lobbying.clients[i].name%></a></li>
-            <% } %>
-        </ul>
-    </div>
-    <% } %>
-    
-</div>
-<% } %>
 
-<% if (campaign_finance.contributors != undefined && campaign_finance.contributors.length > 0) { %>
-<div class='pg-info'>
-    <div class="pg-item">
-        <strong>Relevant Contributions:</strong>
+    <% if (campaign_finance.recipient_breakdown && (campaign_finance.recipient_breakdown.dem || campaign_finance.recipient_breakdown.rep)) { %>
+        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:<%=percents(campaign_finance.recipient_breakdown.dem,campaign_finance.recipient_breakdown.rep)%>&amp;chdl=Democrats|Republicans' alt='Chart for <%=name%>'>
+    <% } %>
+
+    <% if (campaign_finance.contributor_type_breakdown && (campaign_finance.contributor_type_breakdown.individual || campaign_finance.contributor_type_breakdown.pac)) { %>
+        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:<%=percents(campaign_finance.contributor_type_breakdown.individual,campaign_finance.contributor_type_breakdown.pac)%>&amp;chdl=Individuals|PACs' alt='Chart for <%=name%>'>
+    <% } %>
+
+    <% if (campaign_finance.contributor_local_breakdown && (campaign_finance.contributor_local_breakdown.in_state || campaign_finance.contributor_local_breakdown.out_of_state)) { %>
+        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=EFCC01|F2E388&amp;chd=t:<%=percents(campaign_finance.contributor_local_breakdown.in_state,campaign_finance.contributor_local_breakdown.out_of_state)%>&amp;chdl=In-state|Out-of-state' alt='Chart for <%=name%>'>
+    <% } %>
+
+    <% if (campaign_finance.top_industries && campaign_finance.top_industries.length > 0) { %>
+        <li>
+            <h4>Top Contributing Industries</h4>
+            <ul>
+                <% for (var i = 0; i < campaign_finance.top_industries.length; i++) { %>
+                <li><a href='http://influenceexplorer.com/<%=campaign_finance.top_industries[i].type%>/<%=campaign_finance.top_industries[i].slug%>/<%=campaign_finance.top_industries[i].id%>'><%=campaign_finance.top_industries[i].name%></a></li>
+                <% } %>
+            </ul>
+        </li>
+    <% } %>
+
+    <% if ((lobbying.clients && lobbying.clients.length > 0) || (lobbying.top_issues && lobbying.top_issues.length > 0) || lobbying.expenditures) { %>
+        <li>
+            <% if (lobbying.expenditures) { %><h4>$<%=formatDollars(lobbying.expenditures)%> spent on lobbying</h4><% } %>
+        </li>
+        <li>
+            <% if (lobbying.top_issues && lobbying.top_issues.length > 0) { %>
+                <h4>Top Issues Lobbied</h4>
+                <ul>
+                    <% for (var i = 0; i < lobbying.top_issues.length; i++) { %>
+                        <li><%=lobbying.top_issues[i].issue%></li>
+                    <% } %>
+                </ul>
+            <% } %>
+            <% if (lobbying.clients && lobbying.clients.length > 0) { %>
+                <h4>Lobbied on Behalf of:</h4>
+                <ul>
+                    <% for (var i = 0; i < lobbying.clients.length; i++) { %>
+                        <li>
+                            <a href='http://influenceexplorer.com/<%=lobbying.clients[i].type%>/<%=lobbying.clients[i].slug%>/<%=lobbying.clients[i].id%>'><%=lobbying.clients[i].name%></a>
+                        </li>
+                    <% } %>
+                </ul>
+            <% } %>
+        </li>
+    <% } %> 
+
+    <% if (campaign_finance.contributors != undefined && campaign_finance.contributors.length > 0) { %>
+    <li>
+        <h4>Relevant Contributions</h4>
         <ul>
             <% for (var i = 0; i < campaign_finance.contributors.length; i++) { %>
             <li>
@@ -75,14 +72,12 @@
             </li>
             <% } %>
         </ul>
-    </div>
-</div>
-<% } %>
+    </li>
+    <% } %>
 
-<% if (type == 'politician' && upcoming_fundraisers && upcoming_fundraisers.length > 0) { %>
-<div class='pg-info'>
-    <div class='pg-item'>
-        <strong>Relevant Upcoming Fundraisers:</strong>
+    <% if (type == 'politician' && upcoming_fundraisers && upcoming_fundraisers.length > 0) { %>
+    <li>
+        <h4>Relevant Upcoming Fundraisers</h4>
         <ul>
             <% for (var i = 0; i < upcoming_fundraisers.length; i++) { %>
             <li>
@@ -90,9 +85,8 @@
             </li>
             <% } %>
         </ul>
-    </div>
-</div>
-<% } %>
+    </li>
+    <% } %>
+</ul>
 
-<br />
-<a href='http://influenceexplorer.com/<%=type%>/<%=slug%>/<%=id%>'>Learn More &raquo;</a>
+<a class="viewMore" href='http://influenceexplorer.com/<%=type%>/<%=slug%>/<%=id%>'>Learn More &raquo;</a>

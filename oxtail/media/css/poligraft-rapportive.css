@@ -26,30 +26,25 @@
     padding: 0px;
 }
 .pg-panel h3.pg-sender-name {
-    margin: 0px;
-    margin-top: 10px;
-    margin-left: -16px;
-    padding: 4px;
-    padding-left: 20px;
-    background: #f7dd52;
+    margin: 10px 0 0 -16px;
+    padding: 4px 4px 4px 16px;
+    background: #eed635;
     cursor: pointer;
+    font-weight: normal;
+    color: #333333;
+    font-size: 130%;
 }
 .pg-panel .pg-collapsed h3.pg-sender-name {
     background: #dddddd;
 }
 .pg-panel .pg-indicate-org h3.pg-sender-name, .pg-panel .pg-indicate-sender h3.pg-sender-name {
-    background: #f7dd52 !important;
+    background: #eed635 !important;
 }
-.pg-panel h3 .pg-label {
-    font-weight: normal;
-}
+
 .pg-insert ul, .pg-panel ul {
-    padding: 0px !important;
-    margin-top: 4px !important;
-    margin-bottom: 0px !important;
-    margin-right: 0px !important;
-    margin-left: 0px !important;
-    list-style: square !important;
+    padding: 0px 0 0 20px !important;
+    margin: 4px 0 20px 0;
+    list-style: disc !important;
 }
 .pg-insert ul li, .pg-panel ul li {
     padding: 0px !important;
@@ -82,13 +77,10 @@
 .pg-fetching {
     background: #eeeeee url('../img/loading.gif') no-repeat top right;
 }
-.pg-rendered {
-    background: #ffffff url('../img/ielogo.png') no-repeat top right;
-}
 
 .pg-wrapper a, .pg-panel a {
     text-decoration: none;
-    color: #228899;
+    color: #d79d01;
 }
 .pg-wrapper a:hover, .pg-panel a:hover {
     text-decoration: underline;
@@ -122,12 +114,18 @@ ul.pg-contrib-list li {
     background: #fbeea8;
 }
 
-.pg-panel-header {
-    background: #ffffff url('../img/ielogo.png') no-repeat top left;
-    padding-left: 50px;
-    font-size: 20px;
-    margin-top: 15px;
-}
-.pg-panel-header a {
-    color: #f7dd52;
-}
+.pg-panel .pg-org-data { background: #f6f4f4; padding: 15px; border: 1px solid #e7e4e4; }
+
+.pg-panel-header { font-size: 20px; margin-top: 20px; color: #f7dd52; border-top: 1px solid #d6d6d6;}
+.pg-panel-header h2 a { text-indent: -9999em; display: block; width: 200px; height: 37px; background: url(../img/logo.jpg) left top no-repeat; }
+.pg-panel-header h2 { width: 200px; height: 37px; margin: 30px 0 20px;}
+
+.standout { font-weight: bold;}
+
+.pg-panel .tip { margin: 0 0 15px; color: #777171; font-family: Georgia, "Times New Roman", Times, serif; }
+.pg-panel .smTip { font-style: italic; line-height: 18px;}
+.pg-panel { line-height: 20px;}
+
+.viewMore { font-size: 120%; font-style: italic; margin: 25px 0 15px; font-family: Georgia, "Times New Roman", Times, serif; display: block;}
+
+.pg-panel .employersInfo h4 { line-height: 17px; margin-bottom: 0px; margin-top: 15px; color: #5e5a5a;}
