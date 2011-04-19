@@ -89,11 +89,13 @@ INSTALLED_APPS = (
     'oxtail',
 )
 
-AGGREGATES_API_BASE_URL = "http://transparencydata.com/api/1.0/"
+AGGREGATES_API_BASE_URL = "http://staging.influenceexplorer.com:8000/api/1.0/"
 
 OXTAIL_MEDIA_PATH = '/media/oxtail'
 
 OXTAIL_CACHE = 'postgres'
+
+GEO_API_KEY = '7749665d61851a3cca16e7da6502c2a8c5ab56a0bfd85bd983b61500d9fe08d6'
 
 try:
     from local_settings import *
