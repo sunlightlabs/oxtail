@@ -10,7 +10,7 @@
     left: 0px;
     width: 160px;
     display: none;
-    z-index: 1000;
+    z-index: 5 !important;
     font-weight: normal;
     font-style: normal;
     text-decoration: none;
@@ -25,39 +25,52 @@
     margin: 0px;
     padding: 0px;
 }
+
+.sender-header { background-color: #eed635; margin: 10px 0 0 -16px; padding: 4px 4px 4px 16px; cursor: pointer;}
+
 .pg-panel h3.pg-sender-name {
-    margin: 10px 0 0 -16px;
-    padding: 4px 4px 4px 16px;
-    background: #eed635;
-    cursor: pointer;
+    background: url(../img/arrows_expand.png) left 5px no-repeat;
     font-weight: normal;
     color: #333333;
     font-size: 130%;
+    padding-left: 15px;
 }
-.pg-panel .pg-collapsed h3.pg-sender-name {
-    background: #dddddd;
+.sender-header .pg-collapsed { background: #dddddd;}
+
+.pg-collapsed h3.pg-sender-name {
+    background: url(../img/arrows_collapsed.png) left 4px no-repeat;
 }
 .pg-panel .pg-indicate-org h3.pg-sender-name, .pg-panel .pg-indicate-sender h3.pg-sender-name {
     background: #eed635 !important;
 }
 
 .pg-insert ul, .pg-panel ul {
-    padding: 0px 0 0 20px !important;
     margin: 4px 0 20px 0;
-    list-style: disc !important;
 }
-.pg-insert ul li, .pg-panel ul li {
+
+.pg-panel ul { list-style: disc !important; padding: 0px 0 0 20px !important;}
+.pg-insert ul {  list-style: none;  padding: 0;}
+
+.pg-panel ul li {
     padding: 0px !important;
     margin-left: 15px !important;
 }
+.pg-insert ul li { padding: 0px !important; margin: 0px; margin-left: 0;}
+
 .pg-insert img, .pg-panel img {
     border: 0px !important;
 }
+
+.pg-insert .pg-topIndustries li { list-style: disc !important; margin-left: 30px;}
+
 .pg-info {
     border-top: 1px solid #cccccc;
     margin-top: 8px;
     padding-top: 8px;
 }
+
+.pg-panel .pg-info .tip { margin-right: 20px;}
+
 .pg-info .pg-item {
     padding-top: 8px;
 }
@@ -103,7 +116,10 @@ ul.pg-contrib-list li {
     list-style: none;
     margin-left: 0px !important;
     padding-left: 20px !important;
-    padding-bottom: 5px !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eceaea;
+    line-height: 19px;
 }
 
 .pg-panel-item.pg-indicate-org .pg-org-data {
@@ -128,4 +144,4 @@ ul.pg-contrib-list li {
 
 .viewMore { font-size: 120%; font-style: italic; margin: 25px 0 15px; font-family: Georgia, "Times New Roman", Times, serif; display: block;}
 
-.pg-panel .employersInfo h4 { line-height: 17px; margin-bottom: 0px; margin-top: 15px; color: #5e5a5a;}
+.pg-panel .employersInfo h4, .pg-insert h4 { line-height: 17px; margin-bottom: 0px; margin-top: 15px; color: #5e5a5a;}

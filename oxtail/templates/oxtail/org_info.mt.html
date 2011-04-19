@@ -6,25 +6,24 @@
     <% if (campaign_finance.contribution_total) { %>
         <li class='pg-item'>
             <h4>$<%=formatDollars(campaign_finance.contribution_total)%> in contributions <%=(type == 'politician' ? 'received' : 'given')%></h4>
+            <% if (campaign_finance.recipient_breakdown && (campaign_finance.recipient_breakdown.dem || campaign_finance.recipient_breakdown.rep)) { %>
+                <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:<%=percents(campaign_finance.recipient_breakdown.dem,campaign_finance.recipient_breakdown.rep)%>&amp;chdl=Democrats|Republicans' alt='Chart for <%=name%>'>
+            <% } %>
+
+            <% if (campaign_finance.contributor_type_breakdown && (campaign_finance.contributor_type_breakdown.individual || campaign_finance.contributor_type_breakdown.pac)) { %>
+                <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:<%=percents(campaign_finance.contributor_type_breakdown.individual,campaign_finance.contributor_type_breakdown.pac)%>&amp;chdl=Individuals|PACs' alt='Chart for <%=name%>'>
+            <% } %>
+
+            <% if (campaign_finance.contributor_local_breakdown && (campaign_finance.contributor_local_breakdown.in_state || campaign_finance.contributor_local_breakdown.out_of_state)) { %>
+                <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=EFCC01|F2E388&amp;chd=t:<%=percents(campaign_finance.contributor_local_breakdown.in_state,campaign_finance.contributor_local_breakdown.out_of_state)%>&amp;chdl=In-state|Out-of-state' alt='Chart for <%=name%>'>
+            <% } %>
         </li>
-    <% } %>
-
-    <% if (campaign_finance.recipient_breakdown && (campaign_finance.recipient_breakdown.dem || campaign_finance.recipient_breakdown.rep)) { %>
-        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=3072F3|DB2A3F&amp;chd=t:<%=percents(campaign_finance.recipient_breakdown.dem,campaign_finance.recipient_breakdown.rep)%>&amp;chdl=Democrats|Republicans' alt='Chart for <%=name%>'>
-    <% } %>
-
-    <% if (campaign_finance.contributor_type_breakdown && (campaign_finance.contributor_type_breakdown.individual || campaign_finance.contributor_type_breakdown.pac)) { %>
-        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=ABDEBF|169552&amp;chd=t:<%=percents(campaign_finance.contributor_type_breakdown.individual,campaign_finance.contributor_type_breakdown.pac)%>&amp;chdl=Individuals|PACs' alt='Chart for <%=name%>'>
-    <% } %>
-
-    <% if (campaign_finance.contributor_local_breakdown && (campaign_finance.contributor_local_breakdown.in_state || campaign_finance.contributor_local_breakdown.out_of_state)) { %>
-        <img src='http://chart.apis.google.com/chart?cht=p&amp;chf=bg,s,FFFFFF00&amp;chp=1.57&amp;chs=145x50&amp;chco=EFCC01|F2E388&amp;chd=t:<%=percents(campaign_finance.contributor_local_breakdown.in_state,campaign_finance.contributor_local_breakdown.out_of_state)%>&amp;chdl=In-state|Out-of-state' alt='Chart for <%=name%>'>
     <% } %>
 
     <% if (campaign_finance.top_industries && campaign_finance.top_industries.length > 0) { %>
         <li>
             <h4>Top Contributing Industries</h4>
-            <ul>
+            <ul class="pg-topIndustries">
                 <% for (var i = 0; i < campaign_finance.top_industries.length; i++) { %>
                 <li><a href='http://influenceexplorer.com/<%=campaign_finance.top_industries[i].type%>/<%=campaign_finance.top_industries[i].slug%>/<%=campaign_finance.top_industries[i].id%>'><%=campaign_finance.top_industries[i].name%></a></li>
                 <% } %>

@@ -1,6 +1,7 @@
 <div class='pg-panel-item' data-pg-pos='<%=position%>' data-pg-id='<%=name%>_<%=email%>'>
-    <h3 class='pg-sender-name'><b>Sender:</b>&nbsp;<%=name%></h3>
-    
+    <div class="sender-header">
+        <h3 class='pg-sender-name'><b>Sender:</b>&nbsp;<%=name%></h3>
+    </div>
     <div class='pg-panel-content'>
         <% if (sender_info.length == 0) { %>
         <div class='pg-info pg-sender-data'>
@@ -23,7 +24,8 @@
         </div>
         <% } else { %>
         <div class='pg-info pg-sender-data'>
-            <strong>We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed. <a href="http://transparencydata.com/contributions/#<%=url%>">See a list of their contributions on TransparencyData.com</a>.</strong>
+            <p class="tip">We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed.</p> 
+            <a class="viewMore" href="http://transparencydata.com/contributions/#<%=url%>">View All <%=sender_info.length%> Results</a>
         </div>
         <% } %>
         <% if (org_info) { %>

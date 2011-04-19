@@ -213,7 +213,7 @@
         items.eq(0).removeClass('pg-collapsed').show();
         items.slice(1).addClass('pg-collapsed').find('.pg-panel-content').hide();
         
-        items.find('h3.pg-sender-name').unbind('click').bind('click', function() {
+        items.find('.sender-header').unbind('click').bind('click', function() {
             var parent = $(this).parent();
             if (parent.hasClass('pg-collapsed')) {
                 parent.removeClass('pg-collapsed').find('.pg-panel-content').slideDown('fast');
