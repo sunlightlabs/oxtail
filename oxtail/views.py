@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 from dbpedia import *
 from itertools import groupby
 from oxtail import matching
+from influence.names import standardize_individual_name
 
 from oxtail.tasks import *
 
@@ -119,26 +120,34 @@ def sender_info(request):
                     org_info = get_entity_data(matches.keys()[0])
     
     results = None
-    if name and organization:
-        results = api._get_url_json('contributions.json', parse_json=True, contributor_ft=name, organization_ft=organization)
     
-    if name and not results:
-        results = api._get_url_json('contributions.json', parse_json=True, contributor_ft=name)
+    # hard-coding lat and long for now, pending a response from IPInfoDB support
+    lat = '38.895112'
+    lon = '-77.036366'
+    
+    if name:
+        results = api._get_url_json('contributions/contributor_geo.json', parse_json=True, query=name, lat=lat, lon=lon)
     
     sender_info = []
     if results:
-        keyfunc = lambda r: (r['contributor_city'], r['contributor_state'])
-        results = sorted(results, key=keyfunc)
-        for location, result_iter in groupby(results, key=keyfunc):
-            result = list(result_iter)
+        for result in results:
+            loc = result['contributor_location'].split(', ')
+            if len(loc) > 1:
+                city = loc[0].split('-')[0]
+                state = loc[1].replace(' MSA', '').split('-')[0]
+            else:
+                sloc = result['contributor_location'].split(' ')
+                state = sloc[0]
+                city = string.capwords(' '.join(sloc[1:]))
             sender_info.append({
-                'city': string.capwords(location[0]),
-                'state': location[1].upper(),
-                'total': sum([float(r['amount']) for r in result]),
-                'dem_total': sum([float(r['amount']) for r in result if r['recipient_party'] == 'D']),
-                'rep_total': sum([float(r['amount']) for r in result if r['recipient_party'] == 'R']),
-                'count': len(result),
-                'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'contributor_state': location[1].upper()}))
+                'name': standardize_individual_name(result['contributor_name']),
+                'city': city,
+                'state': state,
+                'total': float(result['amount_total']),
+                'dem_total': float(result['amount_democrat']),
+                'rep_total': float(result['amount_republican']),
+                'count': result['count'],
+                'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'contributor_state': state}))
             })
     
     out = {

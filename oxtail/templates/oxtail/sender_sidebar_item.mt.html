@@ -7,25 +7,31 @@
         <div class='pg-info pg-sender-data'>
             <p class="tip">We found no contributions by any individuals named <em><%=name%></em>.</p>
         </div>
-        <% } else if (sender_info.length > 0 && sender_info.length < 6) { %>
+        <% } else  { %>
         <div class='pg-info pg-sender-data'>
-            <p class="tip">We found <%=sender_info.length%> likely-different individuals named <span class="standout"><em><%=name%></em></span> who contributed:</p>
+            <p class="tip">
+                We found <%=sender_info.length%> likely-different individuals named <span class="standout"><em><%=name%></em></span> who contributed.
+                <% if (sender_info.length < 6) { var max = sender_info.length; %>
+                    They are:
+                <% } else { var max = 5; %>
+                    The first five are:
+                <% } %>
+            </p>
             <ul class='pg-contrib-list'>
-                <% for (var i = 0; i < sender_info.length; i++) { %>
+                <% for (var i = 0; i < max; i++) { %>
                 <li style="background-image: url('http://chart.apis.google.com/chart?cht=p&chf=bg,s,FFFFFF00&chp=1.57&chs=35x35&chco=3072F3|DB2A3F&chd=t:<%=percents(sender_info[i].dem_total, sender_info[i].rep_total)%>')">
                     <strong>$<%=formatDollars(sender_info[i].total)%></strong>
-                    in total contributions from a <a href="http://transparencydata.com/contributions/#<%=sender_info[i].url%>"><%=name%> in
+                    in total contributions from a <a href="http://transparencydata.com/contributions/#<%=sender_info[i].url%>"><%=sender_info[i].name%> in
                     <strong>
                         <%=(sender_info[i].city ? sender_info[i].city + ', ' : '') + sender_info[i].state%>
                     </strong></a>
                 </li>
                 <% } %>
             </ul>
-        </div>
-        <% } else { %>
-        <div class='pg-info pg-sender-data'>
-            <p class="tip">We found <%=sender_info.length%> likely-different individuals named <em><%=name%></em> who contributed.</p> 
+            
+            <% if (sender_info.length > 5) { %>
             <a class="viewMore" href="http://transparencydata.com/contributions/#<%=url%>">View All <%=sender_info.length%> Results</a>
+            <% } %>
         </div>
         <% } %>
         <% if (org_info) { %>
