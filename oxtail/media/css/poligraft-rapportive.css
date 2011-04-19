@@ -35,11 +35,15 @@
     font-size: 130%;
     padding-left: 15px;
 }
-.sender-header .pg-collapsed { background: #dddddd;}
 
-.pg-collapsed h3.pg-sender-name {
-    background: url(../img/arrows_collapsed.png) left 4px no-repeat;
+.pg-collapsed .sender-header { background-color: #dddddd; }
+
+.pg-collapsed .sender-header h3.pg-sender-name {
+    background: url(../img/arrows_collapse.png) left 5px no-repeat;
+    color: #908b8b;
 }
+.sender-header:hover h3.pg-sender-name { color: #6d6666; }
+
 .pg-panel .pg-indicate-org h3.pg-sender-name, .pg-panel .pg-indicate-sender h3.pg-sender-name {
     background: #eed635 !important;
 }
