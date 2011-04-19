@@ -14,6 +14,9 @@ _blacklist = set([
     'no one',
     'imagine',
     'impact',
+    'leadership pac',
+    'advocacy group',
+    'public campaign',
 ])
 
 

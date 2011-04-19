@@ -70,9 +70,9 @@ def dump_normalizations(aliases_file, out_file):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + [
+    option_list = BaseCommand.option_list + (
         make_option("-a", "--aliases", dest="alias_file", help="Dump of aliases from database.", default=None),
-        make_option("-o", "--outfile", dest="normalized_file", help="Normalized output file.", defualt='normalized_aliases.csv')]
+        make_option("-o", "--outfile", dest="normalized_file", help="Normalized output file.", default='normalized_aliases.csv'))
         
     def handle(self, *args, **options):
         alias_file = options['alias_file']
@@ -80,7 +80,7 @@ class Command(BaseCommand):
         if not alias_file:
             alias_file = 'aliases.csv'
             print "Querying aliases from database..."
-            query_aliases(alias_file)
+            query_aliases(open(alias_file, 'w'))
             print "Done."
         
         aliases = open(alias_file, 'r')

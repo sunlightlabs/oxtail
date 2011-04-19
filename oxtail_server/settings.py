@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'oxtail',
+    'oxtail.matching',
 )
 
 AGGREGATES_API_BASE_URL = "http://staging.influenceexplorer.com:8000/api/1.0/"
