@@ -50,7 +50,6 @@ def update_pt_cache(get_entity_by_crp, write, verbose=False):
         sorted_events = sorted(pol_events, cmp=lambda a, b: cmp(a['Start_Date'], b['Start_Date']))[:3]
         formatted_events = [{
             "start_time": event['Start_Time'],
-            "committee_id": event['Committee_Id'],
             "entertainment": event['Entertainment'],
             "contributions_info": event['Contributions_Info'],
             "venue": event['Venue_Name'],
