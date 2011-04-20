@@ -5,6 +5,7 @@ from oxtail.models import Employer
 import filelike
 import json
 import re
+import sys
 
 def dbpedia_tokenize(line):
     line = line.strip()
@@ -26,33 +27,53 @@ def dbpedia_tokenize(line):
     return (subj, verb, obj)
 
 class Command(BaseCommand):
+    option_list = BaseCommand.option_list + (
+        make_option('--titles-only',
+            action='store_true',
+            dest='titles_only',
+            default=False
+        ),
+        make_option('--titles-file',
+            action='store',
+            dest='titles_file',
+            default=None
+        ),
+    )
+    
     def handle(self, *args, **options):
-        # delete stale data
-        print "Clearing database..."
-        Employer.objects.all().delete()
         
-        # first build the initial dataset from the domain name record
-        print "Building homepage list..."
-        page_re = re.compile(r"^(https?://)?(www\.)?(?P<domain>[\w\.]+)/?$")
-        homepages = filelike.open("http://downloads.dbpedia.org/3.6/en/homepages_en.nt.bz2")
-        hp_count = 0
-        for line in homepages:
-            subj, verb, obj = dbpedia_tokenize(line)
-            match = page_re.match(obj)
-            if match:
-                md = match.groupdict()
-                emp = Employer(url=md['domain'], resource_id=subj)
-                emp.save()
-                hp_count += 1
-                if hp_count % 10000 == 0:
-                    print "Added %s records" % hp_count
-        homepages.close()
+        if not options['titles_only']:
+            # delete stale data
+            print "Clearing database..."
+            Employer.objects.all().delete()
+            
+            # first build the initial dataset from the domain name record
+            print "Building homepage list..."
+            page_re = re.compile(r"^(https?://)?(www\.)?(?P<domain>[\w\.]+)/?$")
+            homepages = filelike.open("http://downloads.dbpedia.org/3.6/en/homepages_en.nt.bz2")
+            hp_count = 0
+            for line in homepages:
+                subj, verb, obj = dbpedia_tokenize(line)
+                match = page_re.match(obj)
+                if match:
+                    md = match.groupdict()
+                    emp = Employer(url=md['domain'], resource_id=subj)
+                    emp.save()
+                    hp_count += 1
+                    if hp_count % 10000 == 0:
+                        print "Added %s records" % hp_count
+            homepages.close()
         
         print "Matching names to domains..."
-        titles = filelike.open("http://downloads.dbpedia.org/3.6/en/labels_en.nt.bz2")
+        titles_file = options['titles_file'] if options['titles_file'] else "http://downloads.dbpedia.org/3.6/en/labels_en.nt.bz2"
+        print "Using %s" % titles_file
+        titles = filelike.open(titles_file)
         t_count = 0
         for line in titles:
-            subj, verb, obj = dbpedia_tokenize(line)
+            try:
+                subj, verb, obj = dbpedia_tokenize(line)
+            except:
+                continue
             try:
                 emp = Employer.objects.get(resource_id=subj)
                 emp.name = obj
