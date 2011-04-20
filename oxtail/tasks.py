@@ -6,6 +6,7 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
 from name_cleaver import PoliticianNameCleaver
+from oxtail.util import cache as cache_decorate
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
@@ -162,6 +163,13 @@ def fetch_pt(td_metadata):
     else:
         return None
     
+@cache_decorate(seconds=86400)
+def ip_lookup(ip):
+    loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, ip)).read())
+    lat = float(loc_data['latitude'])
+    lon = float(loc_data['longitude'])
+    return (lat, lon)
+
 def process_td(id):
     record = Record.objects.get(pk=id)
     pg_data = json.loads(record.pg_data)
