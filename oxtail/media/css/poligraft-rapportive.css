@@ -44,8 +44,8 @@
 }
 .sender-header:hover h3.pg-sender-name { color: #6d6666; }
 
-.pg-panel .pg-indicate-org h3.pg-sender-name, .pg-panel .pg-indicate-sender h3.pg-sender-name {
-    background: #eed635 !important;
+.pg-panel .pg-indicate-org .sender-header, .pg-panel .pg-indicate-sender .sender-header {
+    background-color: #eed635 !important;
 }
 
 .pg-insert ul, .pg-panel ul {
