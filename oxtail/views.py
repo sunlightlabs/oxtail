@@ -121,9 +121,14 @@ def sender_info(request):
     
     results = None
     
-    # hard-coding lat and long for now, pending a response from IPInfoDB support
-    lat = '38.895112'
-    lon = '-77.036366'
+    loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, request.META['REMOTE_ADDR'])).read())
+    lat = float(loc_data['latitude'])
+    lon = float(loc_data['longitude'])
+    
+    if not lat or not lon:
+        # hard-code DC's info for now so that it still works, since our API can't deal with not having geo data
+        lat = '38.895112'
+        lon = '-77.036366'
     
     if name:
         results = api._get_url_json('contributions/contributor_geo.json', parse_json=True, query=name, lat=lat, lon=lon)
