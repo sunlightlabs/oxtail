@@ -98,6 +98,12 @@ OXTAIL_CACHE = 'postgres'
 
 GEO_API_KEY = '7749665d61851a3cca16e7da6502c2a8c5ab56a0bfd85bd983b61500d9fe08d6'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
 try:
     from local_settings import *
 except:

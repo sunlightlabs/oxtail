@@ -121,9 +121,7 @@ def sender_info(request):
     
     results = None
     
-    loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, request.META['REMOTE_ADDR'])).read())
-    lat = float(loc_data['latitude'])
-    lon = float(loc_data['longitude'])
+    lat, lon = ip_lookup(request.META['REMOTE_ADDR'])
     
     if not lat or not lon:
         # hard-code DC's info for now so that it still works, since our API can't deal with not having geo data
