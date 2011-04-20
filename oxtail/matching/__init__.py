@@ -17,6 +17,14 @@ _blacklist = set([
     'leadership pac',
     'advocacy group',
     'public campaign',
+    'network',
+    'for pac',
+    'the nation',
+    'a white',
+    'member',
+    'project management',
+    'white house',
+    'a cloud',
 ])
 
 
