@@ -315,6 +315,11 @@
                     var sidePanel = $(document).find('.Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
                     pgPanel = $(this.templates.sender_sidebar({}));
                     sidePanel.children('.nH').eq(0).after(pgPanel);
+                    
+                    pgPanel.delegate("a", "click", function() {
+                        window.open($(this).attr('href'));
+                        return false;
+                    })
                 }
                 
                 pgPanel.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates})));
