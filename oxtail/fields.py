@@ -42,3 +42,11 @@ class UUIDField(models.CharField):
             return None
         return value
 
+# from http://stackoverflow.com/questions/3459843/auto-truncating-fields-at-max-length-in-django-charfields
+class TruncatingCharField(models.CharField):
+    def get_prep_value(self, value):
+        value = super(TruncatingCharField,self).get_prep_value(value)
+        if value:
+            return value[:self.max_length]
+        return value
+
