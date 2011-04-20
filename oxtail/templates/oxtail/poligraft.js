@@ -397,12 +397,13 @@
         if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
             parent.onhashchange = run;
         }
-        var button = $(document).find('#oxtail-submit').attr('value', 'Deactivate Oxtail');
+        var button = $(document).find('#oxtail-submit').attr('value', 'Disable Inbox Influence');
         button.get(0).onclick = null;
         button.unbind('click').bind('click', function() {
             window.poligraftEnabled = false;
             parent.onhashchange = null;
-            button.attr('value', 'Reactivate Oxtail').unbind('click').bind('click', enablePoligraft);
+            clearInterval(bound);
+            button.attr('value', 'Enable Inbox Influence').unbind('click').bind('click', enablePoligraft);
         })
     }
     

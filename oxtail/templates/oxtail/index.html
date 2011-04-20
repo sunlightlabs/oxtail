@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Oxtail bookmarklet demo</title>
+        <title>Inbox Influence</title>
     </head>
     <body>
-        <h1>Oxtail</h1>
+        <h1>Inbox Influnce</h1>
+        <p>This is the landing page for the internal beta of Inbox Influence, a tool that adds real-time context information to your Gmail or Google Apps mail.  To install, either click on one of the browser extension links (Firefox or Chrome, as appropriate), or install the bookmarklet by dragging the bookmarklet link to your bookmarks toolbar or right-clicking on the link and adding it to your bookmarks menu.  To use the Inbox Influence browser extension, log into Gmail or your Sunlight Mail and click on the "Enable Inbox Influence" button in the upper right-hand corner of the screen.  To use the bookmarklet, log into Gmail or Sunlight Mail and click on the bookmarklet, either in your bookmarks toolbar or bookmarks menu, depending on how you installed it.</p>
         <ul>
     	<li>
         <a href="javascript:void(window.loadOxtail = function(document) {
@@ -13,7 +14,7 @@
             {% include 'oxtail/loader.js' %}
             if (submit) submit.onclick();
         }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">
-            Oxtail Bookmarklet
+            Inbox Influence Bookmarklet
         </a>
         </li>
         <li><a href="{% url oxtail_crx %}">Chrome Extension</a></li>
