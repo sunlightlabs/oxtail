@@ -27,12 +27,16 @@ def get_file_contents(filename):
     file.close
     return out
 
-def raplet(request):
-    host = {
-        'host' : 'http://%s' % request.META['HTTP_HOST'],
+def get_host_info(request):
+    return {
+        'host' : '%s://%s' % ('https' if request.is_secure() or settings.FORCE_SSL else 'http', request.META['HTTP_HOST']),
         'oxtail_path': reverse('oxtail_index')[:-1],
         'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
     }
+
+def raplet(request):
+    host = get_host_info(request)
+    
     response = {
         'html': render_to_string('oxtail/poligraft.html', host),
         'js': '',
@@ -46,11 +50,7 @@ def raplet(request):
         return HttpResponse(out, mimetype="application/json")
 
 def oxtail_js(request):
-    host = {
-        'host' : 'http://%s' % request.META['HTTP_HOST'],
-        'oxtail_path': reverse('oxtail_index')[:-1],
-        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
-    }
+    host = get_host_info(request)
     
     js = "\n".join([
         get_file_contents('%s/media/js/jquery-1.4.4.min.js' % os.path.dirname(__file__)),
@@ -62,11 +62,7 @@ def oxtail_js(request):
     return HttpResponse(js, 'text/javascript')
 
 def index(request):
-    host = {
-        'host' : 'http://%s' % request.META['HTTP_HOST'],
-        'oxtail_path': reverse('oxtail_index')[:-1],
-        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
-    }
+    host = get_host_info(request)
     
     return direct_to_template(request, 'oxtail/index.html', extra_context=host)
 

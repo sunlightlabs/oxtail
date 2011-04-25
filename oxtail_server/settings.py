@@ -104,6 +104,8 @@ CACHES = {
     }
 }
 
+FORCE_SSL = False
+
 try:
     from local_settings import *
 except:
