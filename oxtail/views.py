@@ -29,7 +29,7 @@ def get_file_contents(filename):
 
 def get_host_info(request):
     return {
-        'host' : '%s://%s' % ('https' if request.is_secure() or settings.FORCE_SSL else 'http', request.META['HTTP_HOST']),
+        'host' : '%s://%s' % ('https' if request.is_secure() or settings.FORCE_SSL else 'http', getattr(settings, 'OVERRIDE_HOST', None) or request.META['HTTP_HOST']),
         'oxtail_path': reverse('oxtail_index')[:-1],
         'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
     }
@@ -179,26 +179,26 @@ class OxtailExtension(UserScriptExtension):
     
     pem_path = os.path.join(os.path.dirname(__file__), 'oxtail.pem')
     
-    def __init__(self, host, oxtail_path):
+    def __init__(self, host, oxtail_path, **kwargs):
         self.host = host
         self.oxtail_path = oxtail_path
         self.description = '%s (%s)' % (self.description, host)
     
     def get_user_script(self):
         host = {
-            'host' : 'http://%s' % self.host,
+            'host' : self.host,
             'oxtail_path': self.oxtail_path,
         }
         return render_to_string('oxtail/crx.js', host)
 
 def oxtail_crx(request):
-    extension = OxtailExtension(request.META['HTTP_HOST'], reverse('oxtail_index')[:-1])
+    extension = OxtailExtension(**get_host_info(request))
     response = HttpResponse(mimetype='application/x-chrome-extension')
     extension.gen_crx(response)
     return response
 
 def oxtail_xpi(request):
-    extension = OxtailExtension(request.META['HTTP_HOST'], reverse('oxtail_index')[:-1])
+    extension = OxtailExtension(**get_host_info(request))
     response = HttpResponse(mimetype='application/x-xpinstall')
     extension.gen_xpi(response)
     return response
