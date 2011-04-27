@@ -12,7 +12,7 @@ from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from dbpedia import *
 from itertools import groupby
-from oxtail import matching
+from oxtail import matching, __git_rev__
 from influence.names import standardize_individual_name
 
 from oxtail.tasks import *
@@ -31,7 +31,8 @@ def get_host_info(request):
     return {
         'host' : '%s://%s' % ('https' if request.is_secure() or settings.FORCE_SSL else 'http', getattr(settings, 'OVERRIDE_HOST', None) or request.META['HTTP_HOST']),
         'oxtail_path': reverse('oxtail_index')[:-1],
-        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media'))
+        'oxtail_media_path' : getattr(settings, 'OXTAIL_MEDIA_PATH', os.path.join(reverse('oxtail_index'), 'media')),
+        'oxtail_git_rev': __git_rev__
     }
 
 def raplet(request):

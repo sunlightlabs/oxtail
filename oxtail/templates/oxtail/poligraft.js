@@ -412,7 +412,7 @@
         }
     })
     if (!stylesLoaded) {
-        $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css" />')
+        $(document.documentElement).find('head').append('<link rel="stylesheet" type="text/css" href="{{ host }}{{ oxtail_media_path }}/css/poligraft-rapportive.css?cb={{ oxtail_git_rev }}" />')
     }
         
     var enablePoligraft = function() {
