@@ -124,7 +124,7 @@ def sender_info(request):
         lat = '38.895112'
         lon = '-77.036366'
     
-    if name:
+    if name and ' ' in name:
         results = api._get_url_json('contributions/contributor_geo.json', parse_json=True, query=name, lat=lat, lon=lon)
     
     sender_info = []
