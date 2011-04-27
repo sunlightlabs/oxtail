@@ -66,38 +66,67 @@
     var regexpEscape = function(text) {
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     }
+    
+    // Cache class for storing messages
+    var RingCache = function(size) {
+        this.dict = {};
+        this.buffer = [];
+        this.size = size;
+        this.position = 0;
+    }
+    
+    RingCache.prototype.set = function(key, value) {
+        if (this.dict[key] !== undefined) {
+            this.buffer[this.dict[key]].value = value;
+            return;
+        } else {
+            if (this.buffer[this.position] !== undefined) {
+                delete this.dict[this.buffer[this.position].key];
+            }
+            this.buffer[this.position] = {key: key, value: value};
+            this.dict[key] = this.position;
+            this.position = (this.position + 1) % this.size;
+        }
+    }
+    
+    RingCache.prototype.get = function(key, defaultValue) {
+        if (this.dict[key] !== undefined) {
+            return this.buffer[this.dict[key]].value;
+        } else {
+            return defaultValue;
+        }
+    }
 
     
-    // Define all of the boilerplate classes, which only really matter the first time the code gets loaded
+    // Define all of the boilerplate parsing classes, which only really matter the first time the code gets loaded
     var PgParser = function() {
-        this.threads = {};
-        this.people = {};
+        this.threads = new RingCache(10);
+        this.people = new RingCache(20);
     }
     
     PgParser.prototype.loadPage = function() {
         var hash = parent.location.hash;
-        if (this.threads[hash] === undefined) {
-            this.threads[hash] = {};
-        }
+        var thread = this.threads.get(hash, {});
         
         var parser = this;
         $(document).find('.Bk').each(function(index, message) {
             var body = $(message).find('.ii.gt>div');
             
-            if (parser.threads[hash][index] === undefined) {
-                parser.threads[hash][index] = new PgMessage(hash, index);
+            if (thread[index] === undefined) {
+                thread[index] = new PgMessage(hash, index);
             }
             
             if (body.length > 0 && !body.eq(0).hasClass('pg-rendered')) {
-                parser.threads[hash][index].fetchAndRender();
+                thread[index].fetchAndRender();
             }
         })
+        this.threads.set(hash, thread);
     }
     
     PgParser.prototype.fetchData = function() {
         var hash = parent.location.hash;
         var parser = this;
-        $.each(parser.threads[hash], function(index, message) {
+        $.each(parser.threads.get(hash), function(index, message) {
             message.fetchAndRender();
         });
     }
@@ -164,8 +193,9 @@
         var senderName = sender.html();
         var senderAddress = sender.attr('email');
         var senderId = senderName + '_' + senderAddress
-        if (window.poligraftParser.people[senderId]) {
-            origMessage.senderData = window.poligraftParser.people[senderId];
+        var senderData = window.poligraftParser.people.get(senderId)
+        if (senderData) {
+            origMessage.senderData = senderData;
             origMessage.senderState = 'fetched';
             callback();
         } else {
@@ -176,7 +206,7 @@
                 data: {name: senderName, email: senderAddress},
                 success: function(data) {
                     // add to cache
-                    window.poligraftParser.people[senderId] = data;
+                    window.poligraftParser.people.set(senderId, data);
                     
                     // do callback
                     origMessage.senderData = data;
