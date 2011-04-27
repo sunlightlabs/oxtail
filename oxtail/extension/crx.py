@@ -14,7 +14,8 @@ class CrxExtension(object):
         return {
             'name': getattr(self, 'name', 'Some Extension'),
             'version': getattr(self, 'version', '0.1'),
-            'description': getattr(self, 'description', 'sample extension')
+            'description': getattr(self, 'description', 'sample extension'),
+            'homepage_url': getattr(self, 'homepage', '')
         }
     
     def get_crx_files(self):

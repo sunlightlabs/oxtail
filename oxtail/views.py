@@ -12,7 +12,7 @@ from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from dbpedia import *
 from itertools import groupby
-from oxtail import matching, __git_rev__
+from oxtail import matching, __git_rev__, __extension_version__
 from influence.names import standardize_individual_name
 
 from oxtail.tasks import *
@@ -168,9 +168,9 @@ def sender_info(request):
 from oxtail.extension import UserScriptExtension
 class OxtailExtension(UserScriptExtension):
     id = 'oxtail@sunlightfoundation.com'
-    name = 'Oxtail'
-    version = '0.2.1'
-    description = 'Oxtail implemented as a Chrome extension.'
+    name = 'Inbox Influence'
+    version = __extension_version__
+    description = "Sunlight Foundation's Gmail extension to add political influence information to your inbox."
     matches = [
         "http://mail.google.com/mail*",
         "https://mail.google.com/mail*",
@@ -181,13 +181,12 @@ class OxtailExtension(UserScriptExtension):
     pem_path = os.path.join(os.path.dirname(__file__), 'oxtail.pem')
     
     def __init__(self, host, oxtail_path, **kwargs):
-        self.host = host
+        self.homepage = host
         self.oxtail_path = oxtail_path
-        self.description = '%s (%s)' % (self.description, host)
     
     def get_user_script(self):
         host = {
-            'host' : self.host,
+            'host' : self.homepage,
             'oxtail_path': self.oxtail_path,
         }
         return render_to_string('oxtail/crx.js', host)
