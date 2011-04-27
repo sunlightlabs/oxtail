@@ -126,6 +126,11 @@ ul.pg-contrib-list li {
     line-height: 19px;
 }
 
+.pg-panel .pg-sender-data {
+    margin-left: -16px;
+    padding-left: 16px;
+}
+
 .pg-panel-item.pg-indicate-org .pg-org-data {
     background: #fbeea8;
 }
