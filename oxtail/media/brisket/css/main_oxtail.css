@@ -356,3 +356,19 @@ dt.moneyTitle { margin-top: 8px;}
 #bookmarkbarImage { border: 1px solid #e2dfdf; margin-bottom: 25px;}
 #bookmarkTitle { margin-top: 40px;}
 #mainContent .biggerBreak { margin-bottom: 25px;}
+
+#inboxImage { border: 3px solid #E2DFDF;
+    float: left;
+    margin-right: 25px;}
+#inboxDownloads dd { margin-bottom: 25px;}
+
+#ieBtn { background: url(../images/btn_ie.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#ieBtn:hover { background: url(../images/btn_ie.png) bottom left no-repeat; }
+#safariBtn { background: url(../images/btn_safari.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#safariBtn:hover { background: url(../images/btn_safari.png) bottom left no-repeat; }
+#firefoxBtn { background: url(../images/btn_firefox.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#firefoxBtn:hover { background: url(../images/btn_firefox.png) bottom left no-repeat; }
+#chromeBtn { background: url(../images/btn_chrome.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#chromeBtn:hover { background: url(../images/btn_chrome.png) bottom left no-repeat; }
+
+#InboxLogo { background: url(../images/logo_inbox.png) top left no-repeat; width: 277px; height: 50px;}
