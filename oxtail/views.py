@@ -63,9 +63,12 @@ def oxtail_js(request):
     return HttpResponse(js, 'text/javascript')
 
 def index(request):
-    host = get_host_info(request)
+    context = get_host_info(request)
+    context['SERVER_URL'] = settings.SERVER_URL
+    context['FORCE_HTTPS'] = settings.FORCE_SSL
+    context['IE_MEDIA_URL'] = settings.IE_MEDIA_URL
     
-    return direct_to_template(request, 'oxtail/index.html', extra_context=host)
+    return direct_to_template(request, 'oxtail/home.html', extra_context=context)
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
