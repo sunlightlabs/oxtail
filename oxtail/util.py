@@ -13,3 +13,21 @@ def cache(seconds = 900):
                 return result
         return x
     return doCache
+
+def is_int(val):
+    try:
+        dummy = int(val)
+        return True
+    except ValueError:
+        return False
+
+seat_labels = {'federal:senate': 'US Senate',
+               'federal:house': 'US House',
+               'federal:president': 'President',
+               'state:upper': 'State Upper Chamber',
+               'state:lower': 'State Lower Chamber',
+               'state:governor': 'Governor',
+               'state:ltgovernor': 'Lt. Governor',
+               'state:judicial': 'State Judiciary',
+               'state:office': 'Other State Office'
+               }

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
 from name_cleaver import PoliticianNameCleaver
-from oxtail.util import cache as cache_decorate
+from oxtail.util import is_int, seat_labels, cache as cache_decorate
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
@@ -18,12 +18,45 @@ def generate_entity_data(td_id, skip_frequent=False):
         'name': str(standardize_name(td_metadata['name'], td_metadata['type'])),
         'raw_name': td_metadata['name'],
         'type': td_metadata['type'],
-        'bioguide_id': td_metadata['metadata'].get('bioguide_id', None)
+        'bioguide_id': td_metadata['metadata'].get('bioguide_id', None),
+        'seat': None,
+        'seat_label': None,
+        'held_seat': None,
+        'affiliated_organizations': None
     }
     struct['slug'] = slugify(struct['name'])
     if struct['type'] == 'politician':
+        # politician name
         poli_name = PoliticianNameCleaver(td_metadata['name']).parse().plus_metadata(td_metadata['metadata']['party'], td_metadata['metadata']['state'])
         struct['name'] = str(poli_name)
+        
+        # politician office info
+        years = sorted([key for key in td_metadata['metadata'].keys() if is_int(key)])
+        
+        wins = [td_metadata['metadata'][year] for year in years if td_metadata['metadata'][year]['seat_result'] == 'W']
+        if wins:
+            struct['seat'] = wins[-1]['seat']
+            struct['held_seat'] = True
+        else:
+            losses = [td_metadata['metadata'][year] for year in years if td_metadata['metadata'][year]['seat_result'] == 'L']
+            if losses:
+                struct['seat'] = losses[-1]['seat']
+                struct['held_seat'] = False
+            elif years:
+                struct['seat'] = td_metadata[years[-1]]['seat']
+                struct['held_seat'] = False
+        
+        if struct['seat'] and struct['seat'] in seat_labels:
+            struct['seat_label'] = seat_labels[struct['seat']]
+        
+    elif struct['type'] == 'individual':
+        if 'affiliated_organizations' in td_metadata['metadata'] and type(td_metadata['metadata']['affiliated_organizations']) == list and len(td_metadata['metadata']['affiliated_organizations']) > 0:
+            struct['affiliated_organizations'] = [{
+                'type': org['type'],
+                'name': org['name'],
+                'id': org['id'],
+                'slug': slugify(standardize_name(org['name'], org['type']))
+            } for org in td_metadata['metadata']['affiliated_organizations']]
     
     crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', td_metadata['external_ids'])
     if crp_ids:
