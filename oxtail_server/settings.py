@@ -105,6 +105,12 @@ CACHES = {
 }
 
 FORCE_SSL = False
+SERVER_URL = "https://inbox.influenceexplorer.com"
+# Base URL for links out to entities
+BRISKET_URL = "http://influenceexplorer.com"
+
+IE_MEDIA_URL = 'https://s3.amazonaws.com/assets.sunlightfoundation.com/brisket/1.0/'
+
 
 try:
     from local_settings import *
