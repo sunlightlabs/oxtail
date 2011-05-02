@@ -90,7 +90,7 @@ INSTALLED_APPS = (
     'oxtail.matching',
 )
 
-AGGREGATES_API_BASE_URL = "http://staging.influenceexplorer.com:8000/api/1.0/"
+AGGREGATES_API_BASE_URL = "http://transparencydata.com/api/1.0/"
 
 OXTAIL_MEDIA_PATH = '/media/oxtail'
 

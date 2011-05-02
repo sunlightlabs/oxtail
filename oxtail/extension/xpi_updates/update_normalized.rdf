@@ -1,0 +1,20 @@
+<RDF:Description about="urn:mozilla:extension:{{ id }}">
+  <em:updates>
+    <RDF:Seq>
+      <RDF:li>
+        <RDF:Description>
+          <em:targetApplication>
+            <RDF:Description>
+              <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+              <em:maxVersion>{{ max_version }}</em:maxVersion>
+              <em:minVersion>{{ min_version }}</em:minVersion>
+              <em:updateHash>sha1:{{ update_hash }}</em:updateHash>
+              <em:updateLink>{{ download_url }}</em:updateLink>
+            </RDF:Description>
+          </em:targetApplication>
+          <em:version>{{ version }}</em:version>
+        </RDF:Description>
+      </RDF:li>
+    </RDF:Seq>
+  </em:updates>
+</RDF:Description>

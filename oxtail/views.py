@@ -183,6 +183,9 @@ class OxtailExtension(UserScriptExtension):
     def __init__(self, host, oxtail_path, **kwargs):
         self.homepage = host
         self.oxtail_path = oxtail_path
+        
+        self.FF_download_url = '%s%s/oxtail.xpi' % (host, oxtail_path)
+        self.FF_update_url = '%s%s/update.rdf' % (host, oxtail_path)
     
     def get_user_script(self):
         host = {
@@ -201,4 +204,10 @@ def oxtail_xpi(request):
     extension = OxtailExtension(**get_host_info(request))
     response = HttpResponse(mimetype='application/x-xpinstall')
     extension.gen_xpi(response)
+    return response
+
+def oxtail_xpi_update(request):
+    extension = OxtailExtension(**get_host_info(request))
+    response = HttpResponse(mimetype='application/rdf+xml')
+    extension.gen_update_rdf(response)
     return response
