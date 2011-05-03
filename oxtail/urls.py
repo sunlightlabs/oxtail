@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^oxtail.crx$', 'oxtail.views.oxtail_crx', name='oxtail_crx'),
     url(r'^oxtail.xpi$', 'oxtail.views.oxtail_xpi', name='oxtail_xpi'),
     url(r'^update.rdf$', 'oxtail.views.oxtail_xpi_update', name='oxtail_xpi_update'),
+    url(r'^update.xml$', 'oxtail.views.oxtail_crx_update', name='oxtail_xpi_update'),
         
     url(r'^contextualize$', 'oxtail.views.contextualize_text', name='contextualize'),
     url(r'^sender_info$', 'oxtail.views.sender_info', name='sender_info'),

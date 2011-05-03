@@ -118,7 +118,7 @@ class XpiExtension(object):
         
         return out
     
-    def gen_update_rdf(self, out):
+    def gen_xpi_update_rdf(self, out):
         xpi_data = StringIO()
         self.gen_xpi(xpi_data)
         

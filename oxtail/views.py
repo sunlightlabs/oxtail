@@ -189,6 +189,9 @@ class OxtailExtension(UserScriptExtension):
         
         self.FF_download_url = '%s%s/oxtail.xpi' % (host, oxtail_path)
         self.FF_update_url = '%s%s/update.rdf' % (host, oxtail_path)
+        
+        self.GC_download_url = '%s%s/oxtail.crx' % (host, oxtail_path)
+        self.GC_update_url = '%s%s/update.xml' % (host, oxtail_path)
     
     def get_user_script(self):
         host = {
@@ -212,5 +215,11 @@ def oxtail_xpi(request):
 def oxtail_xpi_update(request):
     extension = OxtailExtension(**get_host_info(request))
     response = HttpResponse(mimetype='application/rdf+xml')
-    extension.gen_update_rdf(response)
+    extension.gen_xpi_update_rdf(response)
+    return response
+
+def oxtail_crx_update(request):
+    extension = OxtailExtension(**get_host_info(request))
+    response = HttpResponse(mimetype='application/xml')
+    extension.gen_crx_update_xml(response)
     return response
