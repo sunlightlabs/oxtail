@@ -1,6 +1,20 @@
 <a href='http://influenceexplorer.com/<%=type%>/<%=slug%>/<%=id%>'>
     <h3><%=name%></h3>
 </a>
+<% if (seat) { %>
+    <div class="tip">
+        <% if (!held_seat) { %>Candidate for <% } %>
+        <%=seat_label%>
+    </div>
+<% } %>
+<% if (affiliated_organizations != null) { %>
+    <% console.log(affiliated_organizations != null); %>
+    <% if (affiliated_organizations.length > 0) { %>
+        <div class="tip">
+            <a href='http://influenceexplorer.com/<%=affiliated_organizations[0].type%>/<%=affiliated_organizations[0].slug%>/<%=affiliated_organizations[0].id%>'><%=affiliated_organizations[0].name%></a>
+        </div>
+    <% } %>
+<% } %>
 
 <ul class="employersInfo">
     <% if (campaign_finance.contribution_total) { %>
