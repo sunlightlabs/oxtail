@@ -39,13 +39,13 @@
     <p class="tip">Inbox Influence is an add-on for your browser that adds functionality to Gmail. Browser extensions are available for Firefox and Chrome. Other browsers, including Internet Explorer 9 and Safari, can use Inbox Influence through the bookmarklet, but support in these browsers has not been extensively tested at this time.</p> 
     
     <dl id="inboxDownloads">
-        <dt>Firefox:</dt>
+        <dt id="headerFirefox">Firefox:</dt>
         <dd><a class="linkBtn" id="firefoxBtn" href="{% url oxtail_xpi %}">Click here to install Firefox browser extension</a> An Inbox Influence button will appear in the upper right corner of the window when you next load Gmail.
 
-        <dt>Chrome:</dt>
+        <dt id="headerChrome">Chrome:</dt>
         <dd><a class="linkBtn" id="chromeBtn" href="{% url oxtail_crx %}">Click here to install Chrome extension.</a> An Inbox Influence button will appear in the upper right corner of the window when you next load Gmail.</dd>
 
-        <dt>Safari:</dt>
+        <dt id="headerSafari">Safari:</dt>
         <dd><a class="linkBtn" id="safariBtn" href="javascript:void(window.loadOxtail = function(document) {
             if (!document) return;
             {% include 'oxtail/button_adder.js' %}
@@ -53,7 +53,7 @@
             if (submit) submit.onclick();
         }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">Drag this link to your bookmarks bar</a> To activate, click on the bookmark while on your Gmail page.</dd>
 
-        <dt>Internet Explorer 9:</dt> 
+        <dt id="headerIE">Internet Explorer 9:</dt> 
         <dd><a class="linkBtn" id="ieBtn" href="javascript:void(window.loadOxtail = function(document) {
             if (!document) return;
             {% include 'oxtail/button_adder.js' %}
