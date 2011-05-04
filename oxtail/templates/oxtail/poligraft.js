@@ -151,7 +151,7 @@
     }
     
     PgMessage.prototype.getSender = function() {
-        return this.getDiv().parent().parent().children('.gE.iv.gt').find('span[email]');
+        return this.getDiv().parent().parent().children('.gE.iv.gt').find('span.gD[email]');
     }
     
     PgMessage.prototype.fetch = function(callback) {
@@ -329,7 +329,7 @@
                 }
                     
                 var senderEl = $(senderText);
-                h3.append(senderEl);
+                this.getSender().after(senderEl);
                                 
                 h3.find('.pg-org .pg-highlighted').hover(function() {
                     $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').addClass('pg-indicate-org');
