@@ -57,9 +57,12 @@
             var n = name.split("");
             return n[0] + '$+$+' + n.slice(1).join("");
         },
-        'percents': function(val1, val2) {
-            var sum = val1 + val2;
-            return (sum == 0 ? [0, 0] : [Math.round(100*val1/sum), Math.round(100*val2/sum)]).join(',');
+        'percents': function() {
+            var args = Array.prototype.slice.call(arguments);
+            var sum = 0;
+            $.each(args, function(idx, val) { sum += val; });
+            
+            return (sum == 0 ? $.map(args, function() { return 0; }) : $.map(args, function(val) { return Math.round(100*val/sum); })).join(',');
         }
     }
     
@@ -148,7 +151,7 @@
     }
     
     PgMessage.prototype.getSender = function() {
-        return this.getDiv().parent().parent().children('.gE.iv.gt').find('h3>span[email]');
+        return this.getDiv().parent().parent().children('.gE.iv.gt').find('span[email]');
     }
     
     PgMessage.prototype.fetch = function(callback) {

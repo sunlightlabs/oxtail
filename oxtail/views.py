@@ -149,6 +149,7 @@ def sender_info(request):
                 'total': float(result['amount_total']),
                 'dem_total': float(result['amount_democrat']),
                 'rep_total': float(result['amount_republican']),
+                'other_total': float(result['amount_total']) - (float(result['amount_democrat']) + float(result['amount_republican'])),
                 'count': result['count'],
                 'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'contributor_state': state}))
             })
