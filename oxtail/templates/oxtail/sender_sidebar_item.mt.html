@@ -19,7 +19,7 @@
             </p>
             <ul class='pg-contrib-list'>
                 <% for (var i = 0; i < max; i++) { %>
-                <li style="background-image: url('http://chart.apis.google.com/chart?cht=p&chf=bg,s,FFFFFF00&chp=1.57&chs=35x35&chco=3072F3|DB2A3F|DCDDDE&chd=t:<%=percents(sender_info[i].dem_total, sender_info[i].rep_total, sender_info[i].other_total)%>')">
+                <li style="background-image: url('https://chart.googleapis.com/chart?cht=p&chf=bg,s,FFFFFF00&chp=1.57&chs=35x35&chco=3072F3|DB2A3F|DCDDDE&chd=t:<%=percents(sender_info[i].dem_total, sender_info[i].rep_total, sender_info[i].other_total)%>')">
                     <strong>$<%=formatDollars(sender_info[i].total)%></strong>
                     in total contributions from a <a href="http://transparencydata.com/contributions/#<%=sender_info[i].url%>"><%=sender_info[i].name%> in
                     <strong>
