@@ -6,16 +6,17 @@
     padding: 10px;
     border: 1px solid #cccccc;
     position: absolute;
-    top: 1em;
+    top: 0px;
     left: 0px;
     width: 160px;
     display: none;
-    z-index: 5 !important;
+    z-index: 1000 !important;
     font-weight: normal;
     font-style: normal;
     text-decoration: none;
     white-space: normal;
     color: #333 !important;
+    font-size: 80%;
 }
 .pg-panel {
     color: #333 !important;
@@ -95,11 +96,11 @@
     background: #eeeeee url('../img/loading.gif') no-repeat top right;
 }
 
-.pg-wrapper a, .pg-panel a {
+.pg-insert a, .pg-panel a {
     text-decoration: none;
     color: #d79d01;
 }
-.pg-wrapper a:hover, .pg-panel a:hover {
+.pg-insert a:hover, .pg-panel a:hover {
     text-decoration: underline;
 }
 

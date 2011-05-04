@@ -14,6 +14,7 @@ from dbpedia import *
 from itertools import groupby
 from oxtail import matching, __git_rev__, __extension_version__
 from influence.names import standardize_individual_name
+from django.utils.html import strip_tags
 
 from oxtail.tasks import *
 
@@ -72,7 +73,7 @@ def index(request):
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
-    text = request.REQUEST.get('text', '').strip()
+    text = strip_tags(request.REQUEST.get('text', '').strip())
     
     full_text = str(filter(lambda x: x in string.printable, text))
     
