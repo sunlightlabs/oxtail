@@ -43,7 +43,7 @@ def generate_entity_data(td_id, skip_frequent=False):
                 struct['seat'] = losses[-1]['seat']
                 struct['held_seat'] = False
             elif years:
-                struct['seat'] = td_metadata[years[-1]]['seat']
+                struct['seat'] = td_metadata['metadata'][years[-1]]['seat']
                 struct['held_seat'] = False
         
         if struct['seat'] and struct['seat'] in seat_labels:
