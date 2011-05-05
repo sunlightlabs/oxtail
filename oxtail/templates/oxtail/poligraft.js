@@ -312,6 +312,10 @@
                             showing = true;
                             
                             popups[idx].unbind('hover').hover(hoverOver, hoverOut);
+                            popups[idx].undelegate().delegate("a", "click", function() {
+                                window.open($(this).attr('href'));
+                                return false;
+                            })
                         }
                         clearTimeout(timeout);
                     }
