@@ -6,7 +6,9 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
 from name_cleaver import PoliticianNameCleaver
-from oxtail.util import is_int, seat_labels, cache as cache_decorate
+from oxtail.util import is_int, seat_labels
+from hashlib import sha1
+from django.core.cache import cache as _djcache
 
 def generate_entity_data(td_id, skip_frequent=False):
     td_metadata = api.entity_metadata(td_id)
@@ -196,15 +198,27 @@ def fetch_pt(td_metadata):
     else:
         return None
     
-@cache_decorate(seconds=86400)
 def ip_lookup(ip):
-    try:
-        loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, ip), timeout=1).read())
-        lat = float(loc_data['latitude'])
-        lon = float(loc_data['longitude'])
-        return (lat, lon)
-    except:
-        return None
+    # use same hash format as the decorator, for consistency's sake
+    key = sha1(str(ip_lookup.__module__) + str(ip_lookup.__name__) + str((ip,)) + '{}').hexdigest()
+    result = _djcache.get(key)
+    if result is None:
+        try:
+            loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, ip), timeout=1).read())
+            lat = float(loc_data['latitude'])
+            lon = float(loc_data['longitude'])
+            result = (lat, lon)
+        except:
+            pass
+        
+        # in the event of either a timeout or bad data, hard-code to DC's location and cache for an hour instead of a day
+        if result and result[0] and result[1]:
+            _djcache.set(key, result, 86400)
+        else:
+            result = ('38.895112', '-77.036366')
+            _djcache.set(key, result, 3600)
+    
+    return result
 
 def process_td(id):
     record = Record.objects.get(pk=id)
