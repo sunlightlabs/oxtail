@@ -122,7 +122,10 @@ def sender_info(request):
     
     results = None
     
-    lat, lon = ip_lookup(request.META['REMOTE_ADDR'])
+    lat, lon = (None, None)
+    geoip = ip_lookup(request.META['REMOTE_ADDR'])
+    if geoip is not None:
+        lat, lon = geoip
     
     if not lat or not lon:
         # hard-code DC's info for now so that it still works, since our API can't deal with not having geo data

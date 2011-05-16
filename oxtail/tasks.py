@@ -198,10 +198,13 @@ def fetch_pt(td_metadata):
     
 @cache_decorate(seconds=86400)
 def ip_lookup(ip):
-    loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, ip)).read())
-    lat = float(loc_data['latitude'])
-    lon = float(loc_data['longitude'])
-    return (lat, lon)
+    try:
+        loc_data = json.loads(urllib2.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=%s&ip=%s&format=json" % (settings.GEO_API_KEY, ip), timeout=1).read())
+        lat = float(loc_data['latitude'])
+        lon = float(loc_data['longitude'])
+        return (lat, lon)
+    except:
+        return None
 
 def process_td(id):
     record = Record.objects.get(pk=id)
