@@ -3,6 +3,7 @@ from django.http import HttpResponse
 import json
 from urllib import urlencode
 import os
+import re
 import urllib, urllib2
 import base64
 import string
@@ -20,6 +21,8 @@ from oxtail.tasks import *
 
 from django.conf import settings
 from influence.api import api
+
+import Levenshtein
 
 
 def get_file_contents(filename):
@@ -113,7 +116,16 @@ def sender_info(request):
         parts = email.split("@")
         if len(parts) > 1:
             domain = parts[1]
+            
+            # if it's a US TLD, just use the actual purchased domain name (not subdomains) for a match
+            if re.match(r'.*\.(com|net|org)$', domain):
+                domain = '.'.join(domain.split('.')[-2:])
+            
             orgs = lookup_domain(domain)
+            
+            if len(orgs) > 1:
+                orgs = sorted(orgs, key=lambda org: Levenshtein.ratio(domain, org['name'].lower()), reverse=True)
+            
             if orgs:
                 organization = orgs[0]['name']
                 matches = matching.match(str(organization))
