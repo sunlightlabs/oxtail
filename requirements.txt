@@ -6,4 +6,4 @@ pycrypto==2.3
 gevent
 filelike
 pyasn1
-Levenshtein
+python-Levenshtein
