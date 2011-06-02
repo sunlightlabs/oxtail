@@ -360,6 +360,9 @@ dt.moneyTitle { margin-top: 8px;}
 #inboxImage { border: 3px solid #E2DFDF;
     float: left;
     margin-right: 25px;}
+    
+#inboxVideo { margin: 20px 0 0 45px;}    
+    
 #inboxDownloads dd { margin-bottom: 30px;}
 
 #ieBtn { background: url(../images/btn_ie.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
