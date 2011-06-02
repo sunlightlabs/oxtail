@@ -57,9 +57,12 @@
             var n = name.split("");
             return n[0] + '$+$+' + n.slice(1).join("");
         },
-        'percents': function(val1, val2) {
-            var sum = val1 + val2;
-            return (sum == 0 ? [0, 0] : [Math.round(100*val1/sum), Math.round(100*val2/sum)]).join(',');
+        'percents': function() {
+            var args = Array.prototype.slice.call(arguments);
+            var sum = 0;
+            $.each(args, function(idx, val) { sum += val; });
+            
+            return (sum == 0 ? $.map(args, function() { return 0; }) : $.map(args, function(val) { return Math.round(100*val/sum); })).join(',');
         }
     }
     
@@ -148,7 +151,7 @@
     }
     
     PgMessage.prototype.getSender = function() {
-        return this.getDiv().parent().parent().children('.gE.iv.gt').find('h3>span[email]');
+        return this.getDiv().parent().parent().children('.gE.iv.gt').find('span.gD[email]');
     }
     
     PgMessage.prototype.fetch = function(callback) {
@@ -263,24 +266,21 @@
                 
                 this.remapIfNecessary();
                 
-                // hack to fix paragraphs
-                div.find('p').each(function() {
-                    var $this = $(this);
-                    var fakeP = $('<div class="pg-fake-paragraph">');
-                    fakeP.html($this.html());
-                    $this.replaceWith(fakeP);
-                })
-                
                 //do the replacing
                 var text = div.html();
                 var message = this;
                 
                 var match_strings = [];
                 var match_labels = {};
+                var popups = [];
                 $.each(this.pgData.entities, function(num, entity) {
+                    popups[num] = $('<div>').addClass('pg-insert').html(
+                        message.templates.org_info($.extend({}, template_helpers, entity.entity_data))
+                    ).attr('data-pg-idx', num);
+
                     for (var i = 0; i < entity.matched_text.length; i++) {
                         if (entity.matched_text[i] != entity.entity_data.slug) {
-                            var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i]}));
+                            var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i], 'idx': num}));
                             match_strings.push(regexpEscape(entity.matched_text[i]));
                             match_labels[entity.matched_text[i]] = label;
                         }
@@ -297,10 +297,37 @@
                 
                 div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
                 
-                div.find('.pg-wrapper').hover(function() {
-                    $(this).children('.pg-insert').show();
-                }, function() {
-                    $(this).children('.pg-insert').hide();
+                div.find('.pg-wrapper').each(function() {
+                    var idx = parseInt($(this).attr('data-pg-idx'));
+                    
+                    var showing = false;
+                    var timeout = null;
+                    
+                    var hoverOver = function() {
+                        if (!showing) {
+                            var $this = $(this);                        
+                            $(document.body).append(popups[idx]);
+                            var offset = $this.offset();
+                            popups[idx].css({'left': offset.left + 'px', 'top': (offset.top + $this.height()) + 'px'}).fadeIn('fast');
+                            showing = true;
+                            
+                            popups[idx].unbind('hover').hover(hoverOver, hoverOut);
+                            popups[idx].undelegate().delegate("a", "click", function() {
+                                window.open($(this).attr('href'));
+                                return false;
+                            })
+                        }
+                        clearTimeout(timeout);
+                    }
+                    var hoverOut = function() {
+                        timeout = setTimeout(function() {
+                            popups[idx].fadeOut('fast', function() {
+                                $(this).remove();
+                                showing = false;
+                            });
+                        }, 250);
+                    };
+                    $(this).hover(hoverOver, hoverOut);
                 })
                 
             } else if (this.pgState == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
@@ -326,7 +353,7 @@
                 }
                     
                 var senderEl = $(senderText);
-                h3.append(senderEl);
+                this.getSender().after(senderEl);
                                 
                 h3.find('.pg-org .pg-highlighted').hover(function() {
                     $(document).find('.pg-panel-item[data-pg-id=' + $(this).attr('data-pg-id') + ']').addClass('pg-indicate-org');

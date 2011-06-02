@@ -2,7 +2,7 @@
 
 {% block body_class %}about flatText{% endblock %}
 
-{% block pagetitle %}Checking Influence | {% endblock %}
+{% block pagetitle %}Inbox Influence | {% endblock %}
 
 {% block main %}
 
@@ -11,13 +11,13 @@
 </div>
 
 <div id="ltColumn">
-    <p class="standOut">You’re new favorite email tool since the spam filter.</p> 
+    <p class="standOut">Your new favorite email tool since the spam&nbsp;filter.</p> 
     <img id="inboxImage" alt="What Inbox Influence looks like" src="/media/oxtail/brisket/images/img_inbox.jpg" />
-    <p>Everyday our email inboxes are filled with urgent messages from co-workers, dinner reminders from family, as well as news alerts, listservs and even political advocacy communications.</p>
+    <p>Everyday our email inboxes are filled with urgent messages from co-workers, dinner reminders from family, as well as news alerts, listserv messages and even political advocacy communications.</p>
 
     <p>Inbox Influence is a new tool from the <a href="http://sunlightfoundation.com">Sunlight Foundation</a> that allows you to see the political contributions of the people and organizations that are mentioned in emails you receive. This easy-to-use tool can be used for researching influence background on corporate correspondence, adding context to newspaper headlines or discovering who is behind political fundraising solicitations.</p>
 
-    <p>Inbox Influence provides details on any entity in the body of the email, plus information on both the sender of the email and the company where the email is sent. With it, you can see how your friends and family have given to political campaigns. Perhaps Uncle Joe has more mainstream views after all?</p>
+    <p>Inbox Influence provides details on any entity in the body of the email, plus information on both the sender of the email and the company from which it was sent. With it, you can even see how your friends and family have given to political campaigns. Perhaps Uncle Joe has more mainstream views after all?</p>
 
     <p>Inbox Influence is the latest addition to Sunlight’s collection of web tools that use publicly available data to help Americans explore the connection between money and politics:
     <ul>
@@ -29,15 +29,21 @@
 </p>
     <div id="checkingPrivacy">
         <h3 class="withTip h4">Privacy</h3> 
-        <p class="tip withCaps">In order to attach political influence information to your emails Inbox Influence sends the text of the email and the sender information to our servers. This information is used only to process the request and is not stored in any way. All connections to Inbox Influence are made using industry-standard SSL--the same encryption technology that Gmail itself uses.</p> 
+        <p class="tip withCaps">In order to attach political influence information to your emails, Inbox Influence sends the text of the email and the sender information to our servers. This information is used only to process the request and is not stored in any way. All connections to Inbox Influence are made using industry-standard SSL--the same encryption technology that Gmail itself uses.</p> 
 
         <p class="tip withCaps">Inbox Influence can be easily toggled on and off using the button in the upper right corner of the Gmail page. No information is transmitted when Inbox Influence is disabled.</p>
     </div>
+    <div id="checkingPrivacy">
+        <h3 class="withTip h4">About The Data</h3> 
+        <p class="tip withCaps">Inbox Influence uses data from other Sunlight sites, including <a href="http://influenceexplorer.com">Influence Explorer</a>, <a href="http://transparencydata.com">Transparency Data</a> and <a href="http://politicalpartytime.org">Party Time</a>. The Influence Explorer <a href="http://influenceexplorer.com/about">about page</a> has links to detailed methodology pages describing the sources of data, how totals are computed and various caveats.</p> 
+
+        <p class="tip withCaps">Inbox Influence will sometimes make mistakes when matching email text to politician and organization names. For example, 'Gap', 'Caterpillar' and 'Oracle' are all both company names and common nouns. Similarly, politician names will sometimes erroneously match names of ordinary people. There are probably hundreds of Jerry Browns in the US, only three of whom are politicians. For both companies and individuals, Inbox Influence will highlight the name if it thinks there could be a match. Variations in formatting and punctuation may also cause names to be missed.</p>
+    </div>    
 </div>
 
 <div id="rtColumn" class="withBg">
     <h4 class="h5">How to Install</h4>
-    <p class="tip">Inbox Influence is an add-on for your browser that adds functionality to Gmail. Browser extensions are available for Firefox and Chrome. Other browsers, including Internet Explorer 9 and Safari, can use Inbox Influence through the bookmarklet, but support in these browsers has not been extensively tested at this time.</p> 
+    <p>Inbox Influence is an add-on for your browser that adds functionality to Gmail. Browser extensions are available for Firefox and Chrome. Other browsers, including Internet Explorer 9 and Safari, can use Inbox Influence through the bookmarklet, but support in these browsers has not been extensively tested at this time.</p> 
     
     <dl id="inboxDownloads">
         <dt id="headerFirefox">Firefox:</dt>
@@ -52,7 +58,7 @@
             {% include 'oxtail/button_adder.js' %}
             {% include 'oxtail/loader.js' %}
             if (submit) submit.onclick();
-        }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">Drag this link to your bookmarks bar</a> To activate, click on the bookmark while on your Gmail page.</dd>
+        }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">Inbox Influence</a> To activate, click on the bookmark while on your Gmail page.</dd>
 
         <dt id="headerIE">Internet Explorer 9:</dt> 
         <dd><a class="linkBtn" id="ieBtn" href="javascript:void(window.loadOxtail = function(document) {
@@ -60,7 +66,7 @@
             {% include 'oxtail/button_adder.js' %}
             {% include 'oxtail/loader.js' %}
             if (submit) submit.onclick();
-        }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">Right-click here to add to your favorites.</a> To activate, click on the favorite while on your Gmail page.</dd>
+        }); loadOxtail(document.getElementById('canvas_frame') ? document.getElementById('canvas_frame').contentDocument : alert('Please run this bookmarklet from within Gmail.') && false);">Inbox Influence</a> To activate, click on the favorite while on your Gmail page.</dd>
     </dl>    
 </div>
 

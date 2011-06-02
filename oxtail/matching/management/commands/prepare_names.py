@@ -30,7 +30,8 @@ def normalize_person(alias):
         
     permutations = [
         "%s %s" % (parts.first, parts.last),
-        "%s %s" % (parts.last, parts.first),
+        # caused too many false positives
+#        "%s %s" % (parts.last, parts.first),
     ]
     if parts.middle:
         permutations.append("%s %s %s" % (parts.first, parts.middle, parts.last))
@@ -38,13 +39,10 @@ def normalize_person(alias):
     return [s.lower() for s in permutations]
 
 
-def basic_normalization(alias):
-    return [basic_normalizer(alias)]
-
 
 NORMALIZERS_BY_TYPE = {
    'individual': normalize_person,
-   'organization': basic_normalization,
+   'organization': lambda x: x,
    'politician': normalize_person,
    'industry': None,
 }

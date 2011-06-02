@@ -1,4 +1,3 @@
-basic_normalizer = str.lower
 
 from oxtail.matching.matcher import build_token_trie, token_match
 import os

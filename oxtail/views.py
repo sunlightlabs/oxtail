@@ -3,6 +3,7 @@ from django.http import HttpResponse
 import json
 from urllib import urlencode
 import os
+import re
 import urllib, urllib2
 import base64
 import string
@@ -14,11 +15,14 @@ from dbpedia import *
 from itertools import groupby
 from oxtail import matching, __git_rev__, __extension_version__
 from influence.names import standardize_individual_name
+from django.utils.html import strip_tags
 
 from oxtail.tasks import *
 
 from django.conf import settings
 from influence.api import api
+
+import Levenshtein
 
 
 def get_file_contents(filename):
@@ -72,7 +76,7 @@ def index(request):
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
-    text = request.REQUEST.get('text', '').strip()
+    text = strip_tags(request.REQUEST.get('text', '').strip())
     
     full_text = str(filter(lambda x: x in string.printable, text))
     
@@ -112,7 +116,16 @@ def sender_info(request):
         parts = email.split("@")
         if len(parts) > 1:
             domain = parts[1]
+            
+            # if it's a US TLD, just use the actual purchased domain name (not subdomains) for a match
+            if re.match(r'.*\.(com|net|org)$', domain):
+                domain = '.'.join(domain.split('.')[-2:])
+            
             orgs = lookup_domain(domain)
+            
+            if len(orgs) > 1:
+                orgs = sorted(orgs, key=lambda org: Levenshtein.ratio(domain, org['name'].lower()), reverse=True)
+            
             if orgs:
                 organization = orgs[0]['name']
                 matches = matching.match(str(organization))
@@ -121,7 +134,10 @@ def sender_info(request):
     
     results = None
     
-    lat, lon = ip_lookup(request.META['REMOTE_ADDR'])
+    lat, lon = (None, None)
+    geoip = ip_lookup(request.META['REMOTE_ADDR'])
+    if geoip is not None:
+        lat, lon = geoip
     
     if not lat or not lon:
         # hard-code DC's info for now so that it still works, since our API can't deal with not having geo data
@@ -149,8 +165,9 @@ def sender_info(request):
                 'total': float(result['amount_total']),
                 'dem_total': float(result['amount_democrat']),
                 'rep_total': float(result['amount_republican']),
+                'other_total': float(result['amount_total']) - (float(result['amount_democrat']) + float(result['amount_republican'])),
                 'count': result['count'],
-                'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'contributor_state': state}))
+                'url': base64.b64encode(urllib.urlencode({'contributor_ft': name, 'msa_ft': result['contributor_location']}))
             })
     
     out = {
