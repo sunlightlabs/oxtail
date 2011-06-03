@@ -140,6 +140,12 @@ ul.pg-contrib-list li {
     background: #fbeea8;
 }
 
+.pg-panel-footer {
+    padding-top: 10px;
+    font-size: 70%;
+    line-height: 16px;
+}
+
 .pg-panel .pg-org-data { background: #f6f4f4; padding: 15px; border: 1px solid #e7e4e4; }
 
 .pg-panel-header { font-size: 20px; margin-top: 20px; color: #f7dd52; border-top: 1px solid #d6d6d6;}

@@ -379,8 +379,9 @@
                     })
                 }
                 
-                pgPanel.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates})));
-                fixPanel(pgPanel);
+                var panelItems = pgPanel.find('.pg-panel-items');
+                panelItems.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates})));
+                fixPanel(panelItems);
             }
         }
     }
@@ -460,12 +461,21 @@
             parent.onhashchange = run;
         }
         var button = $(document).find('#oxtail-submit').attr('value', 'Disable Inbox Influence');
+        
+        var img = button.find('img');
+        if (img.length) {
+            img.attr('src', img.attr('src').replace('-off', '-on'))
+        }
+        
         button.get(0).onclick = null;
         button.unbind('click').bind('click', function() {
             window.poligraftEnabled = false;
             parent.onhashchange = null;
             clearInterval(bound);
             button.attr('value', 'Enable Inbox Influence').unbind('click').bind('click', enablePoligraft);
+            if (img.length) {
+                img.attr('src', img.attr('src').replace('-on', '-off'))
+            }
         })
     }
     
