@@ -200,9 +200,10 @@ class OxtailExtension(UserScriptExtension):
     
     pem_path = os.path.join(os.path.dirname(__file__), 'oxtail.pem')
     
-    def __init__(self, host, oxtail_path, **kwargs):
+    def __init__(self, host, oxtail_path, oxtail_media_path, **kwargs):
         self.homepage = host
         self.oxtail_path = oxtail_path
+        self.oxtail_media_path = oxtail_media_path
         
         self.FF_download_url = '%s%s/oxtail.xpi' % (host, oxtail_path)
         self.FF_update_url = '%s%s/update.rdf' % (host, oxtail_path)
@@ -214,6 +215,7 @@ class OxtailExtension(UserScriptExtension):
         host = {
             'host' : self.homepage,
             'oxtail_path': self.oxtail_path,
+            'oxtail_media_path': self.oxtail_media_path
         }
         return render_to_string('oxtail/crx.js', host)
 
