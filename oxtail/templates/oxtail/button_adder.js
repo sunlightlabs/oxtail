@@ -12,7 +12,7 @@ if (!submit) {
     
     submitButton.onmouseover = function() {
         submitImg.style.clip = 'rect(34px,166px,68px,0px)';
-        submitImg.style.top = (initalOffset - 34) + 'px';
+        submitImg.style.top = (initialOffset - 34) + 'px';
     };
     submitButton.onmouseout = function() {
         submitImg.style.clip = 'rect(0px,166px,34px,0px)';
