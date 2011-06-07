@@ -109,6 +109,7 @@
 }
 .pg-org, .pg-org span {
     font-weight: normal;
+    vertical-align: top;
 }
 .pg-fake-paragraph {
     margin: 1em 0px;
@@ -144,6 +145,10 @@ ul.pg-contrib-list li {
     padding-top: 10px;
     font-size: 70%;
     line-height: 16px;
+}
+
+.pg-sender .pg-highlighted, .pg-org .pg-highlighted {
+    vertical-align: top;
 }
 
 .pg-panel .pg-org-data { background: #f6f4f4; padding: 15px; border: 1px solid #e7e4e4; }
