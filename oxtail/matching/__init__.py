@@ -24,6 +24,10 @@ _blacklist = set([
     'project management',
     'white house',
     'a cloud',
+    'tuesday morning',
+    'a pac',
+    'office buildings',
+    'lobbying firm',
 ])
 
 
