@@ -119,7 +119,7 @@
                 thread[index] = new PgMessage(hash, index);
             }
             
-            if (body.length > 0 && !body.eq(0).hasClass('pg-rendered')) {
+            if (body.length > 0 && !body.eq(0).hasClass('pg-rendered') && !body.eq(0).hasClass('pg-fetching')) {
                 thread[index].fetchAndRender();
             }
         })
