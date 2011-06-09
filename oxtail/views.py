@@ -128,7 +128,7 @@ def sender_info(request):
             
             if orgs:
                 organization = orgs[0]['name']
-                matches = matching.match(str(organization))
+                matches = matching.match(organization)
                 if matches:
                     org_info = get_entity_data(matches.keys()[0])
     
