@@ -224,7 +224,7 @@
     var fixPanel = function(pgPanel) {
         var idxs = [];
         var ids = [];
-        pgPanel.find('.pg-panel-item').each(function(idx, node) {
+        pgPanel.find('.pg-panel-item').not('[data-pg-hash="' + parent.location.hash + '"]').remove().end().each(function(idx, node) {
             var $node = $(node);
             idxs[idxs.length] = parseInt($node.attr('data-pg-pos'));
             ids[ids.length] = $node.attr('data-pg-id');
@@ -381,8 +381,16 @@
                     })
                 }
                 
+                // if the panel disappears, add it back in
+                setTimeout(function() {
+                    if (pgPanel.parents('body').length == 0) {
+                        var sidePanel = $(document).find('.k .Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
+                        sidePanel.children('.nH').eq(0).after(pgPanel);
+                    }
+                }, 750);
+                
                 var panelItems = pgPanel.find('.pg-panel-items');
-                panelItems.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates})));
+                panelItems.append(this.templates.sender_sidebar_item($.extend({}, template_helpers, this.senderData, {'position': this.index, 'templates': this.templates, 'hash': parent.location.hash})));
                 fixPanel(panelItems);
             }
         }
