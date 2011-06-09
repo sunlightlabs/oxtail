@@ -266,69 +266,71 @@
                 
                 this.remapIfNecessary();
                 
-                //do the replacing
-                var text = div.html();
-                var message = this;
-                
-                var match_strings = [];
-                var match_labels = {};
-                var popups = [];
-                $.each(this.pgData.entities, function(num, entity) {
-                    popups[num] = $('<div>').addClass('pg-insert').html(
-                        message.templates.org_info($.extend({}, template_helpers, entity.entity_data))
-                    ).attr('data-pg-idx', num);
-
-                    for (var i = 0; i < entity.matched_text.length; i++) {
-                        if (entity.matched_text[i] != entity.entity_data.slug) {
-                            var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i], 'idx': num}));
-                            match_strings.push(regexpEscape(entity.matched_text[i]));
-                            match_labels[entity.matched_text[i]] = label;
+                //do the replacing if there were any matches
+                if (this.pgData.entities.length) {
+                    var text = div.html();
+                    var message = this;
+                    
+                    var match_strings = [];
+                    var match_labels = {};
+                    var popups = [];
+                    $.each(this.pgData.entities, function(num, entity) {
+                        popups[num] = $('<div>').addClass('pg-insert').html(
+                            message.templates.org_info($.extend({}, template_helpers, entity.entity_data))
+                        ).attr('data-pg-idx', num);
+    
+                        for (var i = 0; i < entity.matched_text.length; i++) {
+                            if (entity.matched_text[i] != entity.entity_data.slug) {
+                                var label = message.templates.label($.extend({}, template_helpers, entity.entity_data, {'match_name': entity.matched_text[i], 'idx': num}));
+                                match_strings.push(regexpEscape(entity.matched_text[i]));
+                                match_labels[entity.matched_text[i]] = label;
+                            }
                         }
+                    })
+                    
+                    var text_split = text.split(RegExp('(' + match_strings.join('|') + ')(?![^<>]*?>)'));
+                    for (var i = 1; i < text_split.length; i += 2) {
+                        text_split[i] = match_labels[text_split[i]];
                     }
-                })
-                
-                var text_split = text.split(RegExp('(' + match_strings.join('|') + ')(?![^<>]*?>)'));
-                for (var i = 1; i < text_split.length; i += 2) {
-                    text_split[i] = match_labels[text_split[i]];
+                    text = text_split.join("");
+                    
+                    div.html(text);
+                    
+                    div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
+                    
+                    div.find('.pg-wrapper').each(function() {
+                        var idx = parseInt($(this).attr('data-pg-idx'));
+                        
+                        var showing = false;
+                        var timeout = null;
+                        
+                        var hoverOver = function() {
+                            if (!showing) {
+                                var $this = $(this);                        
+                                $(document.body).append(popups[idx]);
+                                var offset = $this.offset();
+                                popups[idx].css({'left': offset.left + 'px', 'top': (offset.top + $this.height()) + 'px'}).fadeIn('fast');
+                                showing = true;
+                                
+                                popups[idx].unbind('hover').hover(hoverOver, hoverOut);
+                                popups[idx].undelegate().delegate("a", "click", function() {
+                                    window.open($(this).attr('href'));
+                                    return false;
+                                })
+                            }
+                            clearTimeout(timeout);
+                        }
+                        var hoverOut = function() {
+                            timeout = setTimeout(function() {
+                                popups[idx].fadeOut('fast', function() {
+                                    $(this).remove();
+                                    showing = false;
+                                });
+                            }, 250);
+                        };
+                        $(this).hover(hoverOver, hoverOut);
+                    })
                 }
-                text = text_split.join("");
-                
-                div.html(text);
-                
-                div.find('.pg-wrapper .pg-wrapper').removeClass('.pg-wrapper').find('.pg-insert').remove();
-                
-                div.find('.pg-wrapper').each(function() {
-                    var idx = parseInt($(this).attr('data-pg-idx'));
-                    
-                    var showing = false;
-                    var timeout = null;
-                    
-                    var hoverOver = function() {
-                        if (!showing) {
-                            var $this = $(this);                        
-                            $(document.body).append(popups[idx]);
-                            var offset = $this.offset();
-                            popups[idx].css({'left': offset.left + 'px', 'top': (offset.top + $this.height()) + 'px'}).fadeIn('fast');
-                            showing = true;
-                            
-                            popups[idx].unbind('hover').hover(hoverOver, hoverOut);
-                            popups[idx].undelegate().delegate("a", "click", function() {
-                                window.open($(this).attr('href'));
-                                return false;
-                            })
-                        }
-                        clearTimeout(timeout);
-                    }
-                    var hoverOut = function() {
-                        timeout = setTimeout(function() {
-                            popups[idx].fadeOut('fast', function() {
-                                $(this).remove();
-                                showing = false;
-                            });
-                        }, 250);
-                    };
-                    $(this).hover(hoverOver, hoverOut);
-                })
                 
             } else if (this.pgState == 'fetching' && !div.hasClass('pg-fetching') && div.length > 0) {
                 div.addClass('pg-fetching');
