@@ -1,4 +1,4 @@
-__extension_version__ = '0.3.4'
+__extension_version__ = '0.3.5'
 
 import subprocess, os
 git = subprocess.Popen('cd %s; git log -n 1 --raw --oneline' % os.path.dirname(os.path.abspath(__file__)), shell=True, stdout=subprocess.PIPE)
