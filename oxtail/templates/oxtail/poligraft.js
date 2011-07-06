@@ -180,10 +180,10 @@
         
         //Submit to Poligraft
         $.ajax({
-            url: '{{ host }}{{ oxtail_path }}/contextualize',
+            url: isShort ? '{{ host }}{{ oxtail_path }}/contextualize' : '{{ host }}{{ oxtail_path }}/contextualize?apikey={{ api_key }}',
             type: isShort ? 'GET' : 'POST',
             dataType: isShort ? 'jsonp': 'json',
-            data: {json: 1, text: text},
+            data: isShort ? {json: 1, text: text, apikey: "{{ api_key }}"} : {json: 1, text: text},
             success: function(realData) {
                 origMessage.pgData = realData;
                 origMessage.pgState = 'fetched';
@@ -206,7 +206,7 @@
                 url: '{{ host }}{{ oxtail_path }}/sender_info',
                 type: 'GET',
                 dataType: 'jsonp',
-                data: {name: senderName, email: senderAddress},
+                data: {name: senderName, email: senderAddress, apikey: "{{ api_key }}"},
                 success: function(data) {
                     // add to cache
                     window.poligraftParser.people.set(senderId, data);

@@ -56,6 +56,7 @@ def raplet(request):
 
 def oxtail_js(request):
     host = get_host_info(request)
+    host['api_key'] = settings.JS_API_KEY
     
     js = "\n".join([
         get_file_contents('%s/media/js/jquery-1.4.4.min.js' % os.path.dirname(__file__)),
