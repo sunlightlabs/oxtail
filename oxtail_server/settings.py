@@ -95,6 +95,8 @@ INSTALLED_APPS = (
 
 DATABASE_ROUTERS = ['db_router.LocksmithRouter']
 
+LOCKSMITH_HTTP_HEADER = None
+
 AGGREGATES_API_BASE_URL = "http://transparencydata.com/api/1.0/"
 
 OXTAIL_MEDIA_PATH = '/media/oxtail'
