@@ -77,6 +77,10 @@ def index(request):
 
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
+    # api key test
+    if not (hasattr(request, 'apikey') and request.apikey.status == 'A'):
+        return HttpResponse("Authorization Required", status=401)
+    
     text = strip_tags(request.REQUEST.get('text', '').strip())
     
     full_text = str(filter(lambda x: x in string.printable, text))
@@ -105,6 +109,10 @@ def entity_info(request, id):
         return HttpResponse(json.dumps(get_entity_data(id)), mimetype="application/json")
 
 def sender_info(request):
+    # api key test
+    if not (hasattr(request, 'apikey') and request.apikey.status == 'A'):
+        return HttpResponse("Authorization Required", status=401)
+    
     name = request.REQUEST.get('name', '').strip()
     email = request.REQUEST.get('email', '').strip()
     organization = None

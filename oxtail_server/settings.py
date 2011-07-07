@@ -71,6 +71,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'locksmith.auth.middleware.APIKeyMiddleware',
 )
 
 ROOT_URLCONF = 'oxtail_server.urls'
