@@ -7,3 +7,4 @@ gevent
 filelike
 pyasn1
 python-Levenshtein
+-e git+https://github.com/sunlightlabs/django-locksmith.git@logparse#egg=locksmith
