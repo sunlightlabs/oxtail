@@ -4,3 +4,4 @@
 .project
 .pydevproject
 oxtail_server/local_settings.py
+locksmith

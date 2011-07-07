@@ -88,7 +88,11 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'oxtail',
     'oxtail.matching',
+    'locksmith.auth',
+    'locksmith.logparse',
 )
+
+DATABASE_ROUTERS = ['db_router.LocksmithRouter']
 
 AGGREGATES_API_BASE_URL = "http://transparencydata.com/api/1.0/"
 
