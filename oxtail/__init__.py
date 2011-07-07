@@ -8,6 +8,6 @@ __git_rev__ = out.split(' ')[0]
 __all__ = ['__version__', '__git_rev__']
 
 # monkey-patch Locksmith's API key model to use local caching
-from oxtail.util import cache
+from oxtail.util import cache as cache_func
 from locksmith.auth.models import ApiKey
-ApiKey.objects.get = cache(3600)(ApiKey.objects.get)
+ApiKey.objects.get = cache_func(3600)(ApiKey.objects.get)
