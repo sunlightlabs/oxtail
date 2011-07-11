@@ -28,6 +28,9 @@ _blacklist = set([
     'a pac',
     'office buildings',
     'lobbying firm',
+    'nationwide',
+    'public service',
+    'public private partnership'
 ])
 
 
