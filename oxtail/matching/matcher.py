@@ -3,6 +3,9 @@ import re
 import csv
 from collections import deque, defaultdict
 
+# split on non-word sequences or non-space sequences with dots.
+# this will make email addresses and URLs interspace. 
+interspace_regex = re.compile("((?:\W+)|(?:\S+\.\S+))")
 
 
 def tokenize(text):
@@ -12,7 +15,7 @@ def tokenize(text):
 
 
 def token_match(trie, text):
-    all_tokens = re.split("(\W+)", text)
+    all_tokens = re.split(interspace_regex, text)
     word_tokens = [all_tokens[i].lower() for i in xrange(0, len(all_tokens), 2)]
     remaining_tokens = deque(word_tokens)
     result = defaultdict(set)
