@@ -2,7 +2,13 @@
 from oxtail.matching.matcher import build_token_trie, token_match
 import os
 import cPickle
-import settings
+
+try:
+    from django.conf import settings
+    DEBUG = settings.DEBUG
+except ImportError:
+    DEBUG = False
+
 
 _blacklist = set([
     'us', 
@@ -36,7 +42,7 @@ _blacklist = set([
 
 data_dir = os.path.dirname(__file__)
 trie_file = os.path.join(data_dir, 'normalized_aliases.trie')
-if os.path.exists(trie_file) and settings.DEBUG:
+if os.path.exists(trie_file) and DEBUG:
     trie_handle = open(trie_file, 'r')
     _entity_trie = cPickle.load(trie_handle)
     trie_handle.close()
