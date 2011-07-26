@@ -1,0 +1,210 @@
+{% extends "oxtail/search_base.html" %}
+
+{% block body_class %}methodology flatText{% endblock %}
+
+{% block pagetitle %}Oxtail API | {% endblock %}
+
+{% block js %}
+{{ block.super }}
+<style type="text/css">
+.json-table td {
+    padding: 0px;
+    font-family: courier new, monospace;
+}
+.json-property {
+    color: #000000;
+    font-weight: bold;
+}
+.json-type {
+    font-style: italic;
+}
+.json-indent-1 {
+    padding-left: 15px !important;
+}
+.json-indent-2 {
+    padding-left: 30px !important;
+}
+.json-indent-3 {
+    padding-left: 45px !important;
+}
+.json-indent-4 {
+    padding-left: 60px !important;
+}
+.json-indent-5 {
+    padding-left: 75px !important;
+}
+.api-info {
+    width: 40%;
+    font-size: 90%;
+}
+.api-info .tip {
+    background: #EDEDE6;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 3px;
+    text-transform: none;
+}
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div id="contentHeader">
+    <h2>Oxtail API</h2>
+</div>
+
+<div id="ltColumn">    
+    <p>The API that powers the Sunlight Foundation's Inbox Influence's real-time textual analysis is called Oxtail, and is available for general public use in applications that require extraction of politically relevant entities from text on either the client or service side.  The data supplied by this API is a subset of the data available in Sunlight's <a href="http://transparencydata.com">Transparency Data</a>, and provides summary information about campaign finance, lobbying, fundraising, and other influence-related areas of interest.</p>
+    
+    <h3>Getting Started</h3>
+    
+    <ul>
+        <li><a href="http://services.sunlightlabs.com/accounts/register/">Register for a Sunlight Services API Key</a></li>
+        <li>Check out the API Documentation (you're looking at it)</li>
+        <li>Ask questions/show off your project on the <a href="http://groups.google.com/group/sunlightlabs-api-discuss">Sunlight API Google Group</a></li>
+    </ul>
+    
+    <h3>Technical Information</h3>
+    
+    <p>The Oxtail API is nominally RESTful, but doesn't provide a notion of resources, per se, and at this time exposes only one endpoint that is suitable for public consumption.  An API key is required for use of this API, and unlike some other Sunlight APIs that allow API keys to be submitted as POST parameters or HTTP headers, the Oxtail API requires that API keys be submitted as GET parameters, regardless of the HTTP method of the request.</p>
+    <p>The API accepts either GET or POST requests, returns JSON, and supports both <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a> and <a href="http://en.wikipedia.org/wiki/Cross-Origin_Resource_Sharing">Cross-Origin Resource Sharing (CORS)</a> for facilitating client-side cross-domain requests.  JSONP has better cross-browser support and proxy traversal features, but as it allows only GET parameters, which generally have browser-imposed length constraints, it is less suitable for the kinds of long messages for which this API is often useful.  The Inbox Influence application uses JSONP for messages shorter than 2000 characters and CORS for long ones; client-side application developers may want to choose a similar trade-off.</p>
+    <p>At this time, Oxtail only allows SSL requests.  The text submitted for analysis is not retained, though Sunlight does store limited non-text information such as API keys, user agents strings and API addresses for analytics purposes.</p>
+    
+    <h4>Endpoint</h4>
+    <p>The current public API endpoint for the Oxtail API is <strong><a href="https://inbox.influneceexplorer.com/contextualize">https://inbox.influenceexplorer.com/contextualize</a></strong>.  It accepts the following parameters:</p>
+    <ul>
+        <li><strong>apikey</strong>: a <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight Services API key</a> (<strong>required</strong>; must be a GET parameter)</li>
+        <li><strong>text</strong>: the text to be analyzed (<strong>required</strong>; can be a GET or POST parameter)</li>
+        <li><strong>callback</strong>: the name of the callback function in which the response should be wrapped for JSONP requests (optional; must be a GET parameter if supplied)</li>
+    </ul>
+    <p>The structure of the response to the API key is as follows.  String literals in this sample will appear as written in the response.  Variables in this sample will be indicated in angle brackets as &lt;type&gt;, where type is one of "string," "float," or one of the other valid JSON types.  In actual responses, some portions of the response may not be relevant, as not all parts of the tree are relevant to all entity types.  In general, keys will be present with null values, rather than absent, if they are not relevant to the entity in question, so as to deal with browser idiosyncrasies regarding the handling of undefined values.  Order is not guaranteed, and may not appear as it does below.</p>
+    <table class="json-table">
+        <tr>
+            <td class="json-indent-0">{</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-1"><span class="json-property">"entities"</span>: [</td>
+            <td class="api-info">
+                <div class="tip">List of all Transparency Data entities found within the text.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-2">{</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-3"><span class="json-property">"matched_text"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4">
+                <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-type">...</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">The entity's name as it appears in the source text; suitable for search and replace.  This list will contain multiple strings if multiple variants of the same entity's name occur within the text.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-3">],</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-3"><span class="json-property">"entity_data"</span>: {</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"name"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">The entity's name after automated standardization for order, case, etc.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"raw_name"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">The entity's name as it appears in the original source data (CRP, NIMSP, etc.)</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"type"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">One of "politician", "organization", or "individual"</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"id"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">Transparency Data ID for the entity; necessary for doing further TD API calls or constructing Influence Explorer link URLs.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"slug"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">Slug for constructing Influence Explorer link URLs.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"bioguide_id"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"crp_id"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"held_seat"</span>: <span class="json-type">&lt;boolean&gt;</span>,</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"seat_label"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"seat"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"campaign_finance"</span>: { <span class="json-type">...</span> },</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"upcoming_fundraisers"</span>: { <span class="json-type">...</span> },</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"affiliated_organizations"</span>: [ <span class="json-type">...</span> ],</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"lobbying"</span>: { <span class="json-type">...</span> }</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-3">}</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-2">
+                },<br />
+                <span class="json-type">...</span>
+            </td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-1">]</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-0">}</td>
+            <td class="api-info"></td>
+        </tr>
+    </table>
+    <br /><br />
+    <h3>Terms of Use</h3>
+    <p>Much of the data returned by the Oxtail API is provided, variously, by the <a href="http://fec.gov">Federal Election Comission</a>, the <a href="http://crp.org">Center for Responsive Politics</a>, and the <a href="http://nimsp.org">National Institute for Money in State Politics</a>, and as such as governed by their respective rules, restrictions, and license terms.  See the <a href="http://transparencydata.com/api/#license">Transparency Data license</a> to learn about these requirements.</p>
+    <p>At this time, the Sunlight Foundation is not enforcing any request or bandwidth limits on the use of the Oxtail API, but reserves the right to do so in the future.</p>
+</div>
+
+{% endblock %}

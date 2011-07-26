@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 import os
 
 urlpatterns = patterns('',
@@ -17,5 +18,6 @@ urlpatterns = patterns('',
     
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/media'}, name="oxtail_media"),
     
+    url(r'^api/$', direct_to_template, {'template': 'oxtail/api.html'}),
     url(r'^$', 'oxtail.views.index', name='oxtail_index'),
 )
