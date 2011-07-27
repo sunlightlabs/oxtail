@@ -33,6 +33,12 @@
 .json-indent-5 {
     padding-left: 75px !important;
 }
+.json-indent-6 {
+    padding-left: 90px !important;
+}
+.json-indent-7 {
+    padding-left: 105px !important;
+}
 .api-info {
     width: 40%;
     font-size: 90%;
@@ -78,7 +84,7 @@
         <li><strong>text</strong>: the text to be analyzed (<strong>required</strong>; can be a GET or POST parameter)</li>
         <li><strong>callback</strong>: the name of the callback function in which the response should be wrapped for JSONP requests (optional; must be a GET parameter if supplied)</li>
     </ul>
-    <p>The structure of the response to the API key is as follows.  String literals in this sample will appear as written in the response.  Variables in this sample will be indicated in angle brackets as <em>&lt;type&gt;</em>, where <em>type</em> is one of "string," "float," or one of the other valid JSON types.  In actual responses, some portions of the response may not be relevant, as not all parts of the tree are relevant to all entity types.  In general, keys will be present with null values, rather than absent, if they are not relevant to the entity in question, so as to deal with browser idiosyncrasies regarding the handling of undefined values.  Order is not guaranteed, and may not appear as it does below.</p>
+    <p>Included below is an annotated sample of the output of the API.  String literals in this sample will appear as written in the response.  Variables in this sample will be indicated in angle brackets as <em>&lt;type&gt;</em>, where <em>type</em> is one of "string," "float," or one of the other valid JSON types.  In actual responses, some portions of the response may not be relevant, as not all parts of the tree are relevant to all entity types.  In general, keys will be present with null values, rather than absent, if they are not relevant to the entity in question, so as to deal with browser idiosyncrasies regarding the handling of undefined values.  Order is not guaranteed, and may not appear as it does below.  For more information on how the totals supplied by this API are calculated, see <a href="http://influenceexplorer.com/about">Influence Explorer's data description</a>.</p>
     <table class="json-table">
         <tr>
             <td class="json-indent-0">{</td>
@@ -158,37 +164,319 @@
             <td class="api-info"></td>
         </tr>
         <tr>
-            <td class="json-indent-4"><span class="json-property">"seat_label"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
-            <td class="api-info"></td>
-        </tr>
-        <tr>
             <td class="json-indent-4"><span class="json-property">"seat"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">
+                    Transparency Data designation for a politician's seat (for example, "federal:president").  In cases where a politician has held or run for multiple seats, the system prefers seats held to seats for which the politician ran and lost, newer ones to older ones, and federal to state.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"seat_label"</span>: <span class="json-type">&lt;string&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">
+                    English-language representation of the seat (e.g., "President").
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"affiliated_organizations"</span>: [</td>
+            <td class="api-info">
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">{</td>
             <td class="api-info"></td>
         </tr>
         <tr>
-            <td class="json-indent-4"><span class="json-property">"campaign_finance"</span>: { <span class="json-type">...</span> },</td>
+            <td class="json-indent-6">
+                <span class="json-property">"name"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"type"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"id"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"slug"</span>: <span class="json-type">&lt;string&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For individuals, a list of organizations with which the person has some affiliation.  Will be null for organizations.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">},<br /><span class="json-type">...</span></td>
             <td class="api-info"></td>
         </tr>
         <tr>
-            <td class="json-indent-4"><span class="json-property">"upcoming_fundraisers"</span>: { <span class="json-type">...</span> },</td>
+            <td class="json-indent-4">],</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"campaign_finance"</span>: {</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"contribution_total"</span>: <span class="json-type">&lt;number&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">
+                    For politicians, the total number of dollars received.  For organizations and individuals, the total spent.
+                </div>
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"recipient_breakdown"</span>: {</td>
             <td class="api-info"></td>
         </tr>
         <tr>
-            <td class="json-indent-4"><span class="json-property">"affiliated_organizations"</span>: [ <span class="json-type">...</span> ],</td>
+            <td class="json-indent-6">
+                <span class="json-property">"dem"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"rep"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"other"</span>: <span class="json-type">&lt;number&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For individuals and organizations, the number of dollars spent on members of each party.  Null for politicians.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">},</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"contributor_local_breakdown"</span>: {</td>
             <td class="api-info"></td>
         </tr>
         <tr>
-            <td class="json-indent-4"><span class="json-property">"lobbying"</span>: { <span class="json-type">...</span> }</td>
+            <td class="json-indent-6">
+                <span class="json-property">"in_state"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"out_of_state"</span>: <span class="json-type">&lt;number&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For politicians, the number of dollars spent by contributors from within the politician's state versus out of state.  Null for organizations and individuals.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">},</td>
             <td class="api-info"></td>
         </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"contributor_type_breakdown"</span>: {</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">
+                <span class="json-property">"individual"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"pac"</span>: <span class="json-type">&lt;number&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For politicians, the number of dollars spent by individual contributors versus political action committees.  Null for organizations and individuals.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">},</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"top_industries"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">{</td>
+            <td class="api-info">
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-7">
+                <span class="json-property">"amount"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"name"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"type"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"id"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"slug"</span>: <span class="json-type">&lt;string&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For politicians, a list of the top industries (up to five) to have donated to the politician.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">
+                },<br />
+                <span class="json-type">...</span>
+            </td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">],</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4">},</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"upcoming_fundraisers"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">{</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">
+                <span class="json-property">"entertainment"</span>: ,<br />
+                <span class="json-property">"start_date"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"start_time"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"venue"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"partytime_id"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"contributions_info"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"make_checks_payable_to"</span>: <span class="json-type">&lt;string&gt;</span>,
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For politicians, a list of one or more upcoming fundraisers, supplied by Sunlight's <a href="http://politicalpartytime.org/">Political Party Time</a> service.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-6"><span class="json-property">"beneficiaries"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-7"><span class="json-type">&lt;string&gt;</span>,<br /><span class="json-type">...</span></td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">],<br /><span class="json-property">"hosts"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-7"><span class="json-type">&lt;string&gt;</span>,<br /><span class="json-type">...</span></td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">]</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">},<br /><span class="json-type">...</span></td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-4">],</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4"><span class="json-property">"lobbying"</span>: {</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"is_lobbyist"</span>: <span class="json-type">&lt;boolean&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">For individuals, whether or not the individual is a lobbyist.  Always false for other types.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"is_lobbying_firm"</span>: <span class="json-type">&lt;boolean&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">For organizations, whether or not the organization is a lobbying firm.  Always false for other types.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"expenditures"</span>: <span class="json-type">&lt;number&gt;</span>,</td>
+            <td class="api-info">
+                <div class="tip">For lobbying firms and lobbyists, how much the entity was paid to lobby.  For non-lobbying-firm organizations, how much the organization spent on lobbying.</div>
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"top_issues"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">{</td>
+            <td class="api-info">
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-7">
+                <span class="json-property">"count"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"issue"</span>: <span class="json-type">&lt;string&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For lobbying firms and lobbyists, the top issues (up to five) for which the entity was hired to lobby, and the number of lobbying registrations for each.  For non-lobbying-firm organizations, the top issues for which they hired lobbyists, and their counts.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">
+                },<br />
+                <span class="json-type">...</span>
+            </td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">],</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-5"><span class="json-property">"clients"</span>: [</td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">{</td>
+            <td class="api-info">
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-7">
+                <span class="json-property">"count"</span>: <span class="json-type">&lt;number&gt;</span>,<br />
+                <span class="json-property">"name"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"type"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"id"</span>: <span class="json-type">&lt;string&gt;</span>,<br />
+                <span class="json-property">"slug"</span>: <span class="json-type">&lt;string&gt;</span>
+            </td>
+            <td class="api-info">
+                <div class="tip">
+                    For lobbying firms and lobbyists, their top clients (up to five) and the number of registrations for each.  Null for other entities.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="json-indent-6">},<br /><span class="json-type">...</span></td>
+            <td class="api-info"></td>
+        </tr>
+        <tr>
+            <td class="json-indent-5">]</td>
+            <td class="api-info"></td>
+        </tr>
+        
+        <tr>
+            <td class="json-indent-4">}</td>
+            <td class="api-info"></td>
+        </tr>
+        
         <tr>
             <td class="json-indent-3">}</td>
             <td class="api-info"></td>
         </tr>
+        
         <tr>
-            <td class="json-indent-2">
-                },<br />
-                <span class="json-type">...</span>
+            <td class="json-indent-2">},<br /><span class="json-type">...</span>
             </td>
             <td class="api-info"></td>
         </tr>
