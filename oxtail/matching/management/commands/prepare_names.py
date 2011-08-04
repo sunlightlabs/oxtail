@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from name_cleaver import PoliticianNameCleaver, RunningMatesNames
 from optparse import make_option
-from oxtail.matching import basic_normalizer
 import csv
 
 
@@ -42,7 +41,7 @@ def normalize_person(alias):
 
 NORMALIZERS_BY_TYPE = {
    'individual': normalize_person,
-   'organization': lambda x: x,
+   'organization': lambda x: [x],
    'politician': normalize_person,
    'industry': None,
 }
