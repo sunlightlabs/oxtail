@@ -52,5 +52,6 @@ else:
     cPickle.dump(_entity_trie, trie_handle, cPickle.HIGHEST_PROTOCOL)
     trie_handle.close()
 
-def match(text):
-    return token_match(_entity_trie, text)
+def match(text, multiple=False):
+    return token_match(_entity_trie, text, multiple)
+

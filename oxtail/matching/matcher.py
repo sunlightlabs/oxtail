@@ -14,7 +14,7 @@ def tokenize(text):
     return word_tokens
 
 
-def token_match(trie, text):
+def token_match(trie, text, multiple=False):
     all_tokens = re.split(interspace_regex, text)
     word_tokens = [all_tokens[i].lower() for i in xrange(0, len(all_tokens), 2)]
     remaining_tokens = deque(word_tokens)
@@ -25,8 +25,12 @@ def token_match(trie, text):
         if item:
             match_start = len(all_tokens) - len(remaining_tokens) * 2 + 1
             match_end = match_start + len(item[0]) * 2 - 1
-            (match, id) = ("".join(all_tokens[match_start:match_end]), item[1])
-            result[id].add(match)
+            (match, ids) = ("".join(all_tokens[match_start:match_end]), item[1])
+            if multiple:
+                for id in ids:
+                    result[id].add(match)
+            else:
+                result[ids[0]].add(match)
             for _ in range(len(item[0])):
                 remaining_tokens.popleft()
         else:
