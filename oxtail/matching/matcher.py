@@ -1,7 +1,7 @@
-from pytrie.pytrie import Trie
-import re
-import csv
 from collections import deque, defaultdict
+from pytrie.pytrie import Trie
+import csv
+import re
 
 # split on non-word sequences or non-space sequences with dots.
 # this will make email addresses and URLs interspace. 
@@ -40,5 +40,10 @@ def token_match(trie, text, multiple=False):
 
 
 def build_token_trie(norm_file, blacklist={}):
-    return Trie([(tokenize(l[0]), l[1]) for l in csv.reader(norm_file) if l[0] not in blacklist])
+    name_map = defaultdict(list)
+    for name, id in csv.reader(norm_file):
+        if name not in blacklist:
+            name_map[name].append(id)
+    
+    return Trie([(tokenize(name), ids) for name, ids in name_map.iteritems()])
 
