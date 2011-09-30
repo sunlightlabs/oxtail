@@ -54,7 +54,7 @@ class XpiExtension(object):
                 'include': rewrite_matches(getattr(self, 'matches', [])),
                 'exclude': rewrite_matches(getattr(self, 'exclude', []), True),
                 'min_version': getattr(self, 'FF_min_version', '1.5'),
-                'max_version': getattr(self, 'FF_max_version', '6.0.*'),
+                'max_version': getattr(self, 'FF_max_version', '8.0.*'),
                 'update_url': getattr(self, 'FF_update_url', ''),
                 'download_url': getattr(self, 'FF_download_url', ''),
             }
