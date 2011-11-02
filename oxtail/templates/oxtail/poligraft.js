@@ -371,7 +371,7 @@
                 
                 var pgPanel = $(document).find('.pg-panel');
                 if (pgPanel.length == 0) {
-                    var sidePanel = $(document).find('.k .Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
+                    var sidePanel = $(document).find('.k,.z').find('.Bs > tr > td.Bu').eq(2).children('.nH').eq(0).children('.nH').eq(0);
                     pgPanel = $(this.templates.sender_sidebar({}));
                     sidePanel.children('.nH').eq(0).after(pgPanel);
                     
