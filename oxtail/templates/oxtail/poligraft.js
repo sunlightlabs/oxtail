@@ -467,7 +467,7 @@
         run();
         
         // Unless we're using rapportive, rerun on hash change
-        if (!$('oxtail-div').hasClass('oxtail-rapportive')) {
+        if (!$('#oxtail-div').hasClass('oxtail-rapportive')) {
             parent.onhashchange = run;
         }
         var button = $(document).find('#oxtail-submit').attr('value', 'Disable Inbox Influence');
