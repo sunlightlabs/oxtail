@@ -3,7 +3,7 @@ var oxtailInterval = setInterval(function() {
     var frame = doc.getElementById('canvas_frame');
     if (frame && frame.contentDocument) {
         var document = frame.contentDocument;
-        if (document.getElementsByClassName('GcwpPb-Z8OBDd').length) {
+        if (document.getElementsByClassName('w-as0').length) {
             clearInterval(oxtailInterval);
             {% include 'oxtail/button_adder.js' %}
             
