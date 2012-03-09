@@ -4,13 +4,10 @@ from optparse import make_option
 import csv
 
 
-
-
-
 def query_aliases(outfile):
-    from django.db import connection
+    from django.db import connections
     
-    c = connection.cursor()
+    c = connections['td'].cursor()
     
     c.copy_expert("""
         COPY (select e.id, e.type, a.alias 
@@ -59,9 +56,12 @@ def dump_normalizations(aliases_file, out_file):
         
         normalizer = NORMALIZERS_BY_TYPE[line['type']]
         if normalizer:
-            for normalization in normalizer(line['alias']):
-                writer.writerow([normalization, line['id']])
-                out_count += 1
+            try:
+                for normalization in normalizer(line['alias']):
+                    writer.writerow([normalization, line['id']])
+                    out_count += 1
+            except:
+                print "Error normalizing '%s'. Skipping alias." % line['alias']
 
     print "Read %d aliases, wrote %s normalized strings." % (in_count, out_count)
 
