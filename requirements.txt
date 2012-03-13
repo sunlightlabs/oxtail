@@ -8,5 +8,5 @@ filelike
 pyasn1
 python-Levenshtein
 -e git+https://github.com/sunlightlabs/django-locksmith.git@master#egg=locksmith
--e git+https://github.com/ecometrica/django-dbarray.git#egg=dbarray
+-e git+https://github.com/aino/django-arrayfields.git#egg=arrayfields
 -e git://github.com/sunlightlabs/python-transparencydata.git#egg=transparencydata
