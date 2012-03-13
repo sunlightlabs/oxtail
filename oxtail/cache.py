@@ -23,7 +23,7 @@ def build_cache(write, verbose=False):
             record = generate_entity_data(entity['id'], skip_frequent=True)
             if not record:
                 raise Exception()
-            write(entity['id'], record['crp_id'] if record['crp_id'] else '', record)
+            write(entity['id'], record['crp_id'] if record['crp_id'] else '', [record['name']] + record['aliases'], record)
         except:
             if verbose: print 'Warning: unable to fetch record for %s %s (%s).' % (entity['type'], entity['name'], entity['id'])
     
@@ -63,12 +63,14 @@ def update_pt_cache(get_entity_by_crp, write, verbose=False):
         if entity:
             entity_data = json.loads(entity)
             entity_data['upcoming_fundraisers'] = formatted_events
-            write(entity_data['id'], crp_id, entity_data)
+            write(entity_data['id'], crp_id, None, entity_data)
             if verbose: print "Wrote %s records for %s (%s)." % (len(formatted_events), entity_data['name'], entity_data['id'])
 
-def write_postgres_record(id, crp_id, obj):
+def write_postgres_record(id, crp_id, aliases, obj):
     e, created = Entity.objects.get_or_create(id=id)
     e.crp_id = crp_id
+    if aliases is not None:
+        e.aliases = aliases
     e.json = json.dumps(obj)
     e.save()
 
