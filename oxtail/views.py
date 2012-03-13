@@ -14,13 +14,13 @@ from django.core.urlresolvers import reverse
 from dbpedia import *
 from itertools import groupby
 from oxtail import matching, __git_rev__, __extension_version__
-from influence.names import standardize_individual_name
+from oxtail.names import standardize_name
 from django.utils.html import strip_tags
 
 from oxtail.tasks import *
 
 from django.conf import settings
-from influence.api import api
+from settings import api
 
 import Levenshtein
 
@@ -168,7 +168,7 @@ def sender_info(request):
                 state = sloc[0]
                 city = string.capwords(' '.join(sloc[1:]))
             sender_info.append({
-                'name': standardize_individual_name(result['contributor_name']),
+                'name': standardize_name(result['contributor_name'], "individual"),
                 'city': city,
                 'state': state,
                 'total': float(result['amount_total']),

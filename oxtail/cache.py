@@ -1,7 +1,7 @@
 from oxtail.tasks import generate_entity_data
 from gevent.pool import Pool
 import json
-from influence.api import api
+from settings import api
 from oxtail.models import Entity
 import urllib2
 import csv

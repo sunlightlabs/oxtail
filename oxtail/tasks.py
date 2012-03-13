@@ -1,7 +1,7 @@
 import json
 import urllib2
-from influence.api import api
-from influence.names import standardize_name
+from settings import api
+from oxtail.names import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
