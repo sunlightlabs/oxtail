@@ -13,9 +13,9 @@ def build_cache(write, verbose=False):
     
     entities = []
     for type in ['individual', 'organization', 'politician']:
-        count = api.entity_count(type)
+        count = api.entities.count(type)
         for i in range(0, count, 10000):
-            entities.extend(api.entity_list(i, i + 10000, type))
+            entities.extend(api.entities.list(i, i + 10000, type))
     
     def fetch(entity):
         if verbose: print 'Fetching record for %s %s (%s)...' % (entity['type'], entity['name'], entity['id'])
@@ -23,7 +23,7 @@ def build_cache(write, verbose=False):
             record = generate_entity_data(entity['id'], skip_frequent=True)
             if not record:
                 raise Exception()
-            write(entity['id'], record['crp_id'] if record['crp_id'] else '', [record['name']] + record['aliases'], record)
+            write(entity['id'], record['crp_id'] if record['crp_id'] else '', [entity['name']] + entity['aliases'], record)
         except:
             if verbose: print 'Warning: unable to fetch record for %s %s (%s).' % (entity['type'], entity['name'], entity['id'])
     
