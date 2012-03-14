@@ -7,6 +7,7 @@ import urllib2
 import csv
 import itertools
 from datetime import date
+from matching.normalize import normalize_list
 
 def build_cache(write, verbose=False):
     if verbose: print "Fetching entities..."
@@ -23,7 +24,7 @@ def build_cache(write, verbose=False):
             record = generate_entity_data(entity['id'], skip_frequent=True)
             if not record:
                 raise Exception()
-            write(entity['id'], record['crp_id'] if record['crp_id'] else '', [entity['name']] + entity['aliases'], record)
+            write(entity['id'], record['crp_id'] if record['crp_id'] else '', normalize_list([entity['name']] + entity['aliases'], entity['type']), record)
         except:
             if verbose: print 'Warning: unable to fetch record for %s %s (%s).' % (entity['type'], entity['name'], entity['id'])
     
