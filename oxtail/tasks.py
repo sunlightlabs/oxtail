@@ -1,7 +1,7 @@
 import json
 import urllib2
-from influence.api import api
-from influence.names import standardize_name
+from settings import api
+from oxtail.names import standardize_name
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from datetime import date
@@ -11,7 +11,7 @@ from hashlib import sha1
 from django.core.cache import cache as _djcache
 
 def generate_entity_data(td_id, skip_frequent=False):
-    td_metadata = api.entity_metadata(td_id)
+    td_metadata = api.entities.metadata(td_id)
     if not bool(td_metadata['totals']):
         return None
     
@@ -93,7 +93,7 @@ def fetch_finance(td_metadata):
     type = td_metadata['type']
     out = {}
     if type == 'organization' or type == 'industry':
-        recipient_breakdown = api.org_party_breakdown(td_id)
+        recipient_breakdown = api.org.party_breakdown(td_id)
         out['recipient_breakdown'] = {'dem': float(recipient_breakdown.get('Democrats', [0, 0])[1]), 'rep': float(recipient_breakdown.get('Republicans', [0, 0])[1]), 'other': float(recipient_breakdown.get('Other', [0, 0])[1])}
         out['contributor_type_breakdown'] = None
         out['contributor_local_breakdown'] = None
@@ -103,7 +103,7 @@ def fetch_finance(td_metadata):
         out['contribution_total'] = td_metadata['totals']['-1']['contributor_amount']
     
     elif type == 'individual':
-        recipient_breakdown = api.indiv_party_breakdown(td_id)
+        recipient_breakdown = api.indiv.party_breakdown(td_id)
         out['recipient_breakdown'] = {'dem': float(recipient_breakdown.get('Democrats', [0, 0])[1]), 'rep': float(recipient_breakdown.get('Republicans', [0, 0])[1]), 'other': float(recipient_breakdown.get('Other', [0, 0])[1])}
         out['contributor_type_breakdown'] = None
         out['contributor_local_breakdown'] = None
@@ -113,12 +113,12 @@ def fetch_finance(td_metadata):
     
     elif type == 'politician':
         out['recipient_breakdown'] = None
-        contributor_type_breakdown = api.pol_contributor_type_breakdown(td_id)
+        contributor_type_breakdown = api.pol.contributor_type_breakdown(td_id)
         out['contributor_type_breakdown'] = {'individual': float(contributor_type_breakdown.get('Individuals', [0, 0])[1]), 'pac': float(contributor_type_breakdown.get('PACs', [0, 0])[1])}
-        contributor_local_breakdown = api.pol_local_breakdown(td_id)
+        contributor_local_breakdown = api.pol.local_breakdown(td_id)
         out['contributor_local_breakdown'] = {'in_state': float(contributor_local_breakdown.get('in-state', [0, 0])[1]), 'out_of_state': float(contributor_local_breakdown.get('out-of-state', [0, 0])[1])}
         
-        top_industries = api.pol_industries(td_id)
+        top_industries = api.pol.industries(td_id)
         out['top_industries'] = [{
             'amount': float(s['amount']),
             'id': s['id'],
@@ -137,11 +137,11 @@ def fetch_lobbying(td_metadata):
     out = {}
     
     if type == 'organization' or type == 'industry':
-        out['top_issues'] = api.org_issues(td_id)[:5]
+        out['top_issues'] = api.org.issues(td_id)[:5]
         out['expenditures'] = float(td_metadata['totals']['-1']['non_firm_spending']) + float(td_metadata['totals']['-1']['firm_income'])
         out['is_lobbyist'] = False
         if td_metadata['metadata']['lobbying_firm']:
-            out['top_issues'] = api.org_registrant_issues(td_id)[:5]
+            out['top_issues'] = api.org.registrant_issues(td_id)[:5]
             out['is_lobbying_firm'] = True
             out['clients'] = [{
                 'name': standardize_name(client['client_name'], 'organization'),
@@ -149,9 +149,9 @@ def fetch_lobbying(td_metadata):
                 'count': client['count'],
                 'id': client['client_entity'],
                 'type': 'organization',
-            } for client in api.org_registrant_clients(td_id)][:5]
+            } for client in api.org.registrant_clients(td_id)][:5]
         else:
-            out['top_issues'] = api.org_issues(td_id)[:5]
+            out['top_issues'] = api.org.issues(td_id)[:5]
             out['is_lobbying_firm'] = False
             out['clients'] = None
     
@@ -159,14 +159,14 @@ def fetch_lobbying(td_metadata):
         out['is_lobbyist'] = bool(td_metadata['lobbying_years'])
         out['is_lobbying_firm'] = None
         if out['is_lobbyist']:
-            out['top_issues'] = api.org_issues(td_id)[:5]
+            out['top_issues'] = api.org.issues(td_id)[:5]
             out['clients'] = [{
                 'name': standardize_name(client['client_name'], 'organization'),
                 'slug': slugify(standardize_name(client['client_name'], 'organization')),
                 'count': client['count'],
                 'id': client['client_entity'],
                 'type': 'organization',
-            } for client in api.indiv_clients(td_id)][:5]
+            } for client in api.indiv.clients(td_id)][:5]
         else:
             out['top_issues'] = None
             out['clients'] = None
@@ -253,7 +253,7 @@ def process_pt(id):
     Record.objects.filter(pk=id).update(pt_data=json.dumps(results), pt_processed=True)
 
 def process_pt_item(tdata_id):
-    info = api.entity_metadata(tdata_id)
+    info = api.entity.metadata(tdata_id)
     crp_ids = filter(lambda x: x['namespace'] == 'urn:crp:recipient', info['external_ids'])
     if crp_ids:
         crp_id = crp_ids[0]['id']

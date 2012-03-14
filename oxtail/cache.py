@@ -1,7 +1,7 @@
 from oxtail.tasks import generate_entity_data
 from gevent.pool import Pool
 import json
-from influence.api import api
+from settings import api
 from oxtail.models import Entity
 import urllib2
 import csv
@@ -13,9 +13,9 @@ def build_cache(write, verbose=False):
     
     entities = []
     for type in ['individual', 'organization', 'politician']:
-        count = api.entity_count(type)
+        count = api.entities.count(type)
         for i in range(0, count, 10000):
-            entities.extend(api.entity_list(i, i + 10000, type))
+            entities.extend(api.entities.list(i, i + 10000, type))
     
     def fetch(entity):
         if verbose: print 'Fetching record for %s %s (%s)...' % (entity['type'], entity['name'], entity['id'])
@@ -23,7 +23,7 @@ def build_cache(write, verbose=False):
             record = generate_entity_data(entity['id'], skip_frequent=True)
             if not record:
                 raise Exception()
-            write(entity['id'], record['crp_id'] if record['crp_id'] else '', record)
+            write(entity['id'], record['crp_id'] if record['crp_id'] else '', [entity['name']] + entity['aliases'], record)
         except:
             if verbose: print 'Warning: unable to fetch record for %s %s (%s).' % (entity['type'], entity['name'], entity['id'])
     
@@ -63,12 +63,14 @@ def update_pt_cache(get_entity_by_crp, write, verbose=False):
         if entity:
             entity_data = json.loads(entity)
             entity_data['upcoming_fundraisers'] = formatted_events
-            write(entity_data['id'], crp_id, entity_data)
+            write(entity_data['id'], crp_id, None, entity_data)
             if verbose: print "Wrote %s records for %s (%s)." % (len(formatted_events), entity_data['name'], entity_data['id'])
 
-def write_postgres_record(id, crp_id, obj):
+def write_postgres_record(id, crp_id, aliases, obj):
     e, created = Entity.objects.get_or_create(id=id)
     e.crp_id = crp_id
+    if aliases is not None:
+        e.aliases = aliases
     e.json = json.dumps(obj)
     e.save()
 
