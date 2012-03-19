@@ -85,17 +85,34 @@ def contextualize_text(request, pg_id=None):
     
     full_text = str(filter(lambda x: x in string.printable, text))
     
-    matches = matching.match(full_text)
-    
-    out = {'entities': []}
-    for match in matches:
-        entity_data = get_entity_data(match)
-        if not entity_data:
-            continue
-        out['entities'].append({
-            'matched_text': list(matches[match]),
-            'entity_data': entity_data
-        })
+    if not request.GET.get('multiple', False):
+        matches = matching.match(full_text)
+        out = {'entities': []}
+        for match in matches:
+            entity_data = get_entity_data(match)
+            if not entity_data:
+                continue
+            out['entities'].append({
+                'matched_text': list(matches[match]),
+                'entity_data': entity_data
+            })
+    else:
+        matches = matching.match(full_text, multiple=True)
+        items = {}
+        for match in matches:
+            entity_data = get_entity_data(match)
+            if not entity_data:
+                continue
+
+            fs = frozenset(matches[match])
+            if fs in items:
+                items[fs]['entity_data'].append(entity_data)
+            else:
+                items[fs] = {
+                    'matched_text': list(matches[match]),
+                    'entity_data': [entity_data]
+                }
+        out = {'entities': items.values()}
             
     if 'callback' in request.GET:
         return HttpResponse('%s(%s)' % (request.GET['callback'], json.dumps(out)), 'text/javascript')
