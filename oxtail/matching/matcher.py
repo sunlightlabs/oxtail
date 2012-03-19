@@ -39,10 +39,10 @@ def token_match(trie, text, multiple=False):
     return result
 
 
-def build_token_trie(norm_file, blacklist={}):
+def build_token_trie(norm_iterable, blacklist={}):
     name_map = defaultdict(list)
-    for name, id in csv.reader(norm_file):
-        if name not in blacklist:
+    for name, id in norm_iterable:
+        if name.lower() not in blacklist:
             name_map[name].append(id)
     
     return Trie([(tokenize(name), ids) for name, ids in name_map.iteritems()])

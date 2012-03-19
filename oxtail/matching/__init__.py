@@ -1,7 +1,7 @@
 
 from oxtail.matching.matcher import build_token_trie, token_match
 import os
-import cPickle
+import csv
 
 try:
     from django.conf import settings
@@ -39,18 +39,25 @@ _blacklist = set([
     'public private partnership'
 ])
 
+def load_trie_from_csv():
+    data_dir = os.path.dirname(__file__)
+    global _entity_trie
+    _entity_trie = build_token_trie(
+        csv.reader(
+            open(os.path.join(data_dir, 'normalized_aliases.csv'), 'r'),
 
-data_dir = os.path.dirname(__file__)
-trie_file = os.path.join(data_dir, 'normalized_aliases.trie')
-if os.path.exists(trie_file) and DEBUG:
-    trie_handle = open(trie_file, 'r')
-    _entity_trie = cPickle.load(trie_handle)
-    trie_handle.close()
-else:
-    _entity_trie = build_token_trie(open(os.path.join(data_dir, 'normalized_aliases.csv'), 'r'), _blacklist)
-    trie_handle = open(trie_file, 'w')
-    cPickle.dump(_entity_trie, trie_handle, cPickle.HIGHEST_PROTOCOL)
-    trie_handle.close()
+        ),
+        _blacklist
+    )
+
+def load_trie_from_db():
+    from oxtail.models import Entity
+
+    global _entity_trie
+    _entity_trie = build_token_trie(
+        Entity.all_aliases(),
+        _blacklist
+    )
 
 def match(text, multiple=False):
     return token_match(_entity_trie, text, multiple)

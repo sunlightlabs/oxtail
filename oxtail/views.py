@@ -75,6 +75,8 @@ def index(request):
     
     return direct_to_template(request, 'oxtail/home.html', extra_context=context)
 
+# initialize the trie on views import time
+matching.load_trie_from_db()
 @cors_allow_all
 def contextualize_text(request, pg_id=None):
     # api key test
