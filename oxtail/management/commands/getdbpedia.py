@@ -50,7 +50,7 @@ class Command(BaseCommand):
             # first build the initial dataset from the domain name record
             print "Building homepage list..."
             page_re = re.compile(r"^(https?://)?(www\.)?(?P<domain>[\w\.]+)/?$")
-            homepages = filelike.open("http://downloads.dbpedia.org/3.6/en/homepages_en.nt.bz2")
+            homepages = filelike.open("http://downloads.dbpedia.org/3.7/en/homepages_en.nt.bz2")
             hp_count = 0
             for line in homepages:
                 subj, verb, obj = dbpedia_tokenize(line)
@@ -65,7 +65,7 @@ class Command(BaseCommand):
             homepages.close()
         
         print "Matching names to domains..."
-        titles_file = options['titles_file'] if options['titles_file'] else "http://downloads.dbpedia.org/3.6/en/labels_en.nt.bz2"
+        titles_file = options['titles_file'] if options['titles_file'] else "http://downloads.dbpedia.org/3.7/en/labels_en.nt.bz2"
         print "Using %s" % titles_file
         titles = filelike.open(titles_file)
         t_count = 0
