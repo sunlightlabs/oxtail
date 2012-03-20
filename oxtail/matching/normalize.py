@@ -5,7 +5,7 @@ def normalize_person(alias, cleaver):
     parts = cleaver(alias).parse()
     
     if isinstance(parts, RunningMatesNames):
-        return normalize_person(str(parts.mate1)) + normalize_person(str(parts.mate2))
+        return normalize_person(str(parts.mate1), PoliticianNameCleaver) + normalize_person(str(parts.mate2), PoliticianNameCleaver)
         
     permutations = [
         "%s %s" % (parts.first, parts.last),
