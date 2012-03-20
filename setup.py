@@ -17,6 +17,7 @@ setup(
     packages=find_packages(),
     license='BSD License',
     platforms=["any"],
+    py_modules=["oxtail","pytrie"],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
