@@ -10,12 +10,14 @@ interspace_regex = re.compile("((?:\W+)|(?:\S+\.\S+))")
 
 def tokenize(text):
     all_tokens = re.split("(\W+)", text)
+    all_tokens = all_tokens[2 if all_tokens[0] == '' else 0 : len(all_tokens) - 2 if all_tokens[-1] == '' else len(all_tokens)]
     word_tokens = [all_tokens[i].lower() for i in xrange(0, len(all_tokens), 2)]
     return word_tokens
 
 
 def token_match(trie, text, multiple=False):
     all_tokens = re.split(interspace_regex, text)
+    all_tokens = all_tokens[2 if all_tokens[0] == '' else 0 : len(all_tokens) - 2 if all_tokens[-1] == '' else len(all_tokens)]
     word_tokens = [all_tokens[i].lower() for i in xrange(0, len(all_tokens), 2)]
     remaining_tokens = deque(word_tokens)
     result = defaultdict(set)
@@ -43,7 +45,10 @@ def build_token_trie(norm_iterable, blacklist={}):
     name_map = defaultdict(list)
     for name, id in norm_iterable:
         if name.lower() not in blacklist:
-            name_map[name].append(id)
+            tokenized_name = tokenize(name)
+            if not tokenized_name:
+                raise Exception("Error: Trie input '%s' tokenized to empty string" % name)
+            name_map[tuple(tokenized_name)].append(id)
     
-    return Trie([(tokenize(name), ids) for name, ids in name_map.iteritems()])
+    return Trie([(tokens, ids) for tokens, ids in name_map.iteritems()])
 
