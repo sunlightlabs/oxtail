@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from name_cleaver import PoliticianNameCleaver, RunningMatesNames
+from name_cleaver import PoliticianNameCleaver, IndividualNameCleaver, RunningMatesNames, UnparseableNameException
 from optparse import make_option
 import csv
 
@@ -18,50 +18,54 @@ def query_aliases(outfile):
     """, outfile)
 
 
-def normalize_person(alias):
+def normalize_politician(alias):
     parts = PoliticianNameCleaver(alias).parse()
-    
-    if isinstance(parts, RunningMatesNames):
-        return normalize_person(str(parts.mate1)) + normalize_person(str(parts.mate2))
-        
-    permutations = [
-        "%s %s" % (parts.first, parts.last),
-        # caused too many false positives
-#        "%s %s" % (parts.last, parts.first),
-    ]
-    if parts.middle:
-        permutations.append("%s %s %s" % (parts.first, parts.middle, parts.last))
-    
-    return [s.lower() for s in permutations]
 
+    if isinstance(parts, RunningMatesNames):
+        return get_name_permutations(parts.mate1) + get_name_permutations(parts.mate2)
+
+    return [s.lower() for s in get_name_permutations(parts)]
+
+
+def get_name_permutations(name):
+
+    options = [ name.primary_name_parts() ]
+
+    if name.middle:
+        options.append(name.primary_name_parts(include_middle=True))
+
+    return [ ' '.join(x) for x in options ]
 
 
 NORMALIZERS_BY_TYPE = {
-   'individual': normalize_person,
+   'individual': lambda x: get_name_permutations(IndividualNameCleaver(x).parse()),
    'organization': lambda x: [x],
-   'politician': normalize_person,
+   'politician': normalize_politician,
    'industry': None,
 }
 
 def dump_normalizations(aliases_file, out_file):
-    
+
     reader = csv.DictReader(aliases_file)
     writer = csv.writer(out_file)
-    
+
     in_count = 0
     out_count = 0
-    
+
     for line in reader:
         in_count += 1
-        
-        normalizer = NORMALIZERS_BY_TYPE[line['type']]
-        if normalizer:
-            try:
-                for normalization in normalizer(line['alias']):
-                    writer.writerow([normalization, line['id']])
-                    out_count += 1
-            except:
-                print "Error normalizing '%s'. Skipping alias." % line['alias']
+
+        try:
+            normalizer = NORMALIZERS_BY_TYPE[line['type']]
+            for normalization in normalizer(line['alias']):
+                writer.writerow([normalization, line['id']])
+                out_count += 1
+        except UnparseableNameException, e:
+            print "Error parsing '%s'. Skipping alias." % line['alias']
+        except TypeError:
+            print "Industry found. Skipping alias '%s'." % line['alias']
+        except KeyError:
+            print "Error: Known entity type not found in line: '%s'." % '|'.join(line)
 
     print "Read %d aliases, wrote %s normalized strings." % (in_count, out_count)
 
