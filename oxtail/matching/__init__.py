@@ -37,7 +37,11 @@ _blacklist = set([
     'nationwide',
     'public service',
     'public private partnership',
-    'science center'
+    'science center',
+    'global',
+    'advanced',
+    'japan',
+    'life'
 ])
 
 def load_trie_from_csv():
