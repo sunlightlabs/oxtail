@@ -2,7 +2,10 @@ from name_cleaver import IndividualNameCleaver, OrganizationNameCleaver, Politic
 import operator
 
 def normalize_person(alias, cleaver):
-    parts = cleaver(alias).parse()
+    parts = cleaver(alias).parse(safe=True)
+    
+    if isinstance(parts, (str, unicode)):
+        return [alias]
     
     if isinstance(parts, RunningMatesNames):
         return normalize_person(str(parts.mate1), PoliticianNameCleaver) + normalize_person(str(parts.mate2), PoliticianNameCleaver)
@@ -21,7 +24,7 @@ def normalize_person(alias, cleaver):
 
 NORMALIZERS_BY_TYPE = {
    'individual': lambda x: normalize_person(x, IndividualNameCleaver),
-   'organization': lambda x: [OrganizationNameCleaver(x).parse().__str__()],
+   'organization': lambda x: [OrganizationNameCleaver(x).parse(safe=True).__str__()],
    'politician': lambda x: normalize_person(x, PoliticianNameCleaver),
    'industry': None,
 }
