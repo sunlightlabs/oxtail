@@ -1,0 +1,43 @@
+#ltColumn { padding: 0 30px 0 40px; width: 650px; float: left; overflow: hidden;}
+#rtColumn { padding: 0 40px 80px 30px; width: 170px; float: left; overflow: hidden;}
+body.home #ltColumn { width: 260px; padding: 0 30px 0 40px;}
+body.home #rtColumn { width: 560px; padding: 0 40px 0 30px;}
+#mainContent .withBg { margin-top: -25px; padding-top: 25px; background: url(../brisket/images/bg_postcard.jpg) top right repeat-y;}
+#mainContent .withBgLeft { background: url(../brisket/images/bg_postcard.jpg) top left repeat-y; }
+
+#checkingLogo { background: url(../brisket/images/logo_checking.png) top left no-repeat; width: 211px; height: 80px; text-indent: -9999em; display: block; float: left;}
+#checkingLogo_home { margin-bottom: 15px; margin-top: 30px; width: 211px; height: 80px; }
+#checkingLogo_home a { width: 211px; height: 80px; text-indent: -9999em; display: block; background: url(../brisket/images/logo_checking.png) top left no-repeat;}
+.standOut { font-family: Georgia, Times New Roman, Times, serif; font-style: oblique; font-size: 180%; color: #3b3130; line-height: 30px;}
+.home .standOut { width: auto; font-size: 160%;}
+#checkingPrivacy { margin-top: 30px; padding-top: 30px; border-top: 1px dashed #E2DFDF; color: #827d7d;}
+#checkingPrivacy p { font-size: 88%;}
+#checkingImage { border: 3px solid #e2dfdf; margin-bottom: 25px;}
+#bookmarkbarImage { border: 1px solid #e2dfdf; margin-bottom: 25px;}
+#bookmarkTitle { margin-top: 40px;}
+#mainContent .biggerBreak { margin-bottom: 25px;}
+
+#inboxImage { border: 3px solid #E2DFDF;
+    float: left;
+    margin-right: 25px;}
+    
+#inboxVideo { margin: 20px 0 0 45px;}    
+    
+#inboxDownloads dd { margin-bottom: 30px;}
+
+#ieBtn { background: url(../brisket/images/btn_ie.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#ieBtn:hover { background: url(../brisket/images/btn_ie.png) bottom left no-repeat; }
+#safariBtn { background: url(../brisket/images/btn_safari.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#safariBtn:hover { background: url(../brisket/images/btn_safari.png) bottom left no-repeat; }
+#firefoxBtn { background: url(../brisket/images/btn_firefox.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#firefoxBtn:hover { background: url(../brisket/images/btn_firefox.png) bottom left no-repeat; }
+#chromeBtn { background: url(../brisket/images/btn_chrome.png) top left no-repeat; width: 167px; height: 60px; margin: 10px 0 5px;}
+#chromeBtn:hover { background: url(../brisket/images/btn_chrome.png) bottom left no-repeat; }
+
+#InboxLogo { background: url(../brisket/images/logo_inbox.png) top left no-repeat; width: 277px; height: 50px;}
+
+dt { text-indent: -9999em; display: block;  width: 169px; height: 56px; margin-bottom: 10px;}
+#headerFirefox { background: url(../brisket/images/header_firefox.png) top left no-repeat;}
+#headerChrome { background: url(../brisket/images/header_chrome.png) top left no-repeat;}
+#headerSafari { background: url(../brisket/images/header_safari.png) top left no-repeat;}
+#headerIE { background: url(../brisket/images/header_ie.png) top left no-repeat;}

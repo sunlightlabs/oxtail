@@ -5,9 +5,9 @@
 {% block search %}
 
 <div id="search">
-  <form id="searchForm" action="http://influenceexplorer.com/search" method="get">
+  <form id="searchForm" action="{{ IE_BASE_URL }}search" method="get">
     <input data-initial="SEARCH" name="query" value="SEARCH" maxlength="200" type="text" id="id_query" />
-    <input type="hidden" name="from_form" value="1">
+    <input type="hidden" name="from_form" value="1" />
     <button class="searchBtn_sm" type="submit">
       <span>Go</span>
     </button>

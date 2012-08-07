@@ -72,6 +72,8 @@ def index(request):
     context['SERVER_URL'] = settings.SERVER_URL
     context['FORCE_HTTPS'] = settings.FORCE_SSL
     context['IE_MEDIA_URL'] = settings.IE_MEDIA_URL
+    context['IE_BASE_URL'] = 'http://influenceexplorer.com/'
+    context['DATA_BASE_URL'] = 'http://data.influenceexplorer.com/'
     
     return direct_to_template(request, 'oxtail/home.html', extra_context=context)
 
