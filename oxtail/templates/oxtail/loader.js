@@ -1,16 +1,16 @@
 var submit = document.getElementById('oxtail-submit');
 if (submit) {
-    var initialOffset = window.globalStorage === undefined ? 0 : -17;
+    var initialOffset = window.globalStorage === undefined ? 0 : -12;
     var submitImg = document.getElementById('oxtail-submit-img');
     
     submitImg.style.top = initialOffset + 'px';
     
     submit.onmouseover = function() {
-        submitImg.style.clip = 'rect(34px,166px,68px,0px)';
-        submitImg.style.top = (initialOffset - 34) + 'px';
+        submitImg.style.clip = 'rect(25px,49px,51px,0px)';
+        submitImg.style.top = (initialOffset - 25) + 'px';
     };
     submit.onmouseout = function() {
-        submitImg.style.clip = 'rect(0px,166px,34px,0px)';
+        submitImg.style.clip = 'rect(0px,49px,25px,0px)';
         submitImg.style.top = initialOffset + 'px';
     };
     
