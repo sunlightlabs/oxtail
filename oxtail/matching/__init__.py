@@ -41,7 +41,8 @@ _blacklist = set([
     'global',
     'advanced',
     'japan',
-    'life'
+    'life',
+    'd'
 ])
 
 def load_trie_from_csv():
