@@ -1,4 +1,4 @@
-__extension_version__ = '0.4.6'
+__extension_version__ = '0.4.7'
 __version__ = __extension_version__
 
 import subprocess, os
