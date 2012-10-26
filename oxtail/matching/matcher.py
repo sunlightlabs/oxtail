@@ -44,7 +44,7 @@ def token_match(trie, text, multiple=False):
 def build_token_trie(norm_iterable, blacklist={}):
     name_map = defaultdict(list)
     for name, id in norm_iterable:
-        if name.lower() not in blacklist:
+        if name.lower().strip() not in blacklist:
             tokenized_name = tokenize(name)
             if not tokenized_name:
                 raise Exception("Error: Trie input '%s' tokenized to empty string" % name)
