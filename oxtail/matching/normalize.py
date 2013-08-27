@@ -1,4 +1,5 @@
-from name_cleaver import IndividualNameCleaver, OrganizationNameCleaver, PoliticianNameCleaver, RunningMatesNames
+from name_cleaver import IndividualNameCleaver, OrganizationNameCleaver, PoliticianNameCleaver
+from name_cleaver.names import RunningMatesNames
 import operator
 
 def normalize_person(alias, cleaver):
@@ -20,11 +21,25 @@ def normalize_person(alias, cleaver):
     
     return permutations
 
+def normalize_organization(alias):
+    parts = OrganizationNameCleaver(alias).parse(safe=True)
+
+    if isinstance(parts, (str, unicode)):
+        return [parts]
+
+    standardized = parts.__str__()
+    expanded = parts.expand()
+
+    if standardized == expanded:
+        return [standardized]
+    else:
+        return [standardized, expanded]
+
 
 
 NORMALIZERS_BY_TYPE = {
    'individual': lambda x: normalize_person(x, IndividualNameCleaver),
-   'organization': lambda x: [OrganizationNameCleaver(x).parse(safe=True).__str__()],
+   'organization': normalize_organization,
    'politician': lambda x: normalize_person(x, PoliticianNameCleaver),
    'industry': None,
 }
